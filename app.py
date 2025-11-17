@@ -122,4 +122,4 @@ if st.sidebar.button("🧹 Clear Chat History"):
     st.rerun() # Rerun the app to clear the display
 
 st.sidebar.markdown("---")
-st.sidebar.info("Built with Gemini AI and Streamlit by [Your Name/Org]")
+st.sidebar.info("Built with Gemini AI and Streamlit by [Shalini Mourya]")
