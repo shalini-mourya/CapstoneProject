@@ -1,6 +1,7 @@
 #pip install streamlit google-generativeai fpdf2
 import streamlit as st
 import google.generativeai as genai
+from google.generativeai import types
 from fpdf import FPDF # fpdf2 is imported as fpdf
 import io # To handle binary data for PDF
 import os # For environment variables
@@ -76,7 +77,13 @@ for message in st.session_state.chat_history:
 # Chat input
 if user_prompt := st.chat_input("Ask Gemini..."):
     # Add user message to chat history and display
-    st.session_state.chat_history.append(genai.types.contents.glm_content.to_glm_content({"role": "user", "parts": [{"text": user_prompt}]}))
+   # st.session_state.chat_history.append(genai.types.contents.glm_content.to_glm_content({"role": "user", "parts": [{"text": user_prompt}]}))
+    st.session_state.chat_history.append(
+    types.Content(
+        role="user", 
+        parts=[types.Part.from_text(user_prompt)]
+    )
+)
     with st.chat_message("user", avatar="🧑‍💻"):
         st.markdown(user_prompt)
 
