@@ -1,7 +1,8 @@
 #pip install streamlit google-generativeai fpdf2
 import streamlit as st
 import google.generativeai as genai
-from google.generativeai import types
+from google import genai
+from google.genai import types
 from fpdf import FPDF # fpdf2 is imported as fpdf
 import io # To handle binary data for PDF
 import os # For environment variables
