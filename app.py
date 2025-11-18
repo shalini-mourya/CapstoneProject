@@ -80,3 +80,20 @@ if st.button("📄 Download Response as PDF"):
             st.error("PDF generation failed.")
     else:
         st.warning("No response available to download.")
+
+# -- shalini signature--
+st.sidebar.markdown("---")
+st.sidebar.markdown("👩‍💻 Developed by **Shalini Mourya**")
+
+st.sidebar.markdown(
+    """
+    <div style='font-size: 12px; color: gray;'>
+    ⚙️ <b>Tech Stack:</b><br>
+    Built with <b>Python</b> for backend logic,<br>
+    <b>Streamlit</b> for interactive UI,<br>
+    <b>Google Generative AI (Gemini)</b> for chat,<br>
+    and <b>FPDF</b> for Unicode-compliant PDF export.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
