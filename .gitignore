@@ -1,4 +1,4 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-#ignore a files from streamlit folder
-.streamlit/*
-
+.streamlit/secrets.toml
+__pycache__/
+*.pyc
+.env
