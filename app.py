@@ -79,17 +79,23 @@ def generate_pdf(prompt, response):
             return fonts["default"]["alias"]
 
     text = f"Prompt:\n{prompt}\n\nResponse:\n{response}"
+    
     # Split into paragraphs
     paragraphs = text.split("\n")
 
     for para in paragraphs:
+        if not para.strip():
+            pdf.ln(10)#skip empty lines
+            continue
         # If paragraph contains Hindi, use Hindi font
         if any(hindi_pattern.match(ch) for ch in para):
-            pdf.set_font(fonts["hindi"]["alias"], size=10)
-            pdf.set_left_margin(10)
-            pdf.set_right_margin(10)
-
+            if fonts["hindi"]["alias"] in pdf.fonts:
+                pdf.set_font(fonts["hindi"]["alias"], size=12)
+            else:
+                pdf.set_font(fonts["default"]["alias"], size=12)
             pdf.multi_cell(0, 10, para)
+            #pdf.set_left_margin(10)
+            #pdf.set_right_margin(10)            
         else:
             # For mixed content, handle inline emoji/Latin
             current_font = None
@@ -99,19 +105,19 @@ def generate_pdf(prompt, response):
                     font_choice = fonts["default"]["alias"]
 
                 if font_choice != current_font:
-                    pdf.set_font(font_choice, size=10)
+                    pdf.set_font(font_choice, size=12)
                     current_font = font_choice
 
                 try:
-                    pdf.write(10, ch)
+                    pdf.write(8, ch)
                 except Exception:
-                    pdf.write(10, "?")
+                    pdf.write(8, "?")
             pdf.ln(10)  # move to next line after each paragraph
 
     # Output as bytes
     pdf_bytes = pdf.output(dest="S")
-    if isinstance(pdf_bytes, bytearray):
-        pdf_bytes = bytes(pdf_bytes)
+    #if isinstance(pdf_bytes, bytearray):
+    #    pdf_bytes = bytes(pdf_bytes)
     return pdf_bytes
 
 
