@@ -89,23 +89,21 @@ def generate_pdf(prompt, response):
             pdf.multi_cell(0, 10, para)
         else:
             # For mixed content, handle inline emoji/Latin
+            current_font = None
+            for ch in para:
+                font_choice = choose_font(ch)
+                if font_choice not in pdf.fonts:
+                    font_choice = fonts["default"]["alias"]
 
+                if font_choice != current_font:
+                    pdf.set_font(font_choice, size=12)
+                    current_font = font_choice
 
-    current_font = None
-    for ch in para:
-        font_choice = choose_font(ch)
-        if font_choice not in pdf.fonts:
-            font_choice = fonts["default"]["alias"]
-
-        if font_choice != current_font:
-            pdf.set_font(font_choice, size=12)
-            current_font = font_choice
-
-        try:
-            pdf.write(8, ch)
-        except Exception:
-            pdf.write(8, "?")
-    pdf.ln(10)  # move to next line after each paragraph
+                try:
+                    pdf.write(8, ch)
+                except Exception:
+                    pdf.write(8, "?")
+            pdf.ln(10)  # move to next line after each paragraph
 
     # Output as bytes
     pdf_bytes = pdf.output(dest="S")
