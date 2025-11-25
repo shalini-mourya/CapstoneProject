@@ -1,5 +1,8 @@
 ﻿streamlit>=1.39
 google-generativeai
 fpdf2==2.7.9
+os
+base64
+re
 
 
