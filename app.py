@@ -91,10 +91,8 @@ def generate_pdf(prompt, response):
             pdf.set_font(font_choice, size=12)
             current_font = font_choice
 
-        try:
-            pdf.write(8, ch)
-        except Exception:
-            pdf.write(8, "?")
+        pdf.multi_cell(0, 10, text)
+
 
     # Output as bytes
     pdf_bytes = pdf.output(dest="S")
