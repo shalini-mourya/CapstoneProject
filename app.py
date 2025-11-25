@@ -85,7 +85,7 @@ def generate_pdf(prompt, response):
     for para in paragraphs:
         # If paragraph contains Hindi, use Hindi font
         if any(hindi_pattern.match(ch) for ch in para):
-            pdf.set_font(fonts["hindi"]["alias"], size=12)
+            pdf.set_font(fonts["hindi"]["alias"], size=10)
             pdf.set_left_margin(10)
             pdf.set_right_margin(10)
 
@@ -99,7 +99,7 @@ def generate_pdf(prompt, response):
                     font_choice = fonts["default"]["alias"]
 
                 if font_choice != current_font:
-                    pdf.set_font(font_choice, size=12)
+                    pdf.set_font(font_choice, size=10)
                     current_font = font_choice
 
                 try:
