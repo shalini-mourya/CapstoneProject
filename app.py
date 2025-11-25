@@ -56,7 +56,7 @@ def generate_pdf(prompt, response):
 
     # Fonts (TTF supported in fpdf2)
     fonts = {
-        "hindi": {"alias": "Mangal", "path": "assets/fonts/Mangal Regular.ttf"},
+        "hindi": {"alias": "Mangal", "path": "assets/fonts/Mangal-Regular.ttf"},
         "emoji": {"alias": "Emoji", "path": "assets/fonts/NotoEmoji-Regular.ttf"},
         "default": {"alias": "DejaVu", "path": "assets/fonts/DejaVuSans.ttf"}
     }
@@ -85,7 +85,7 @@ def generate_pdf(prompt, response):
     for ch in text:
         font_choice = choose_font(ch)
         if font_choice not in pdf.fonts:
-            font_choice = "DejaVu"
+            font_choice = fonts["default"]["alias"]
 
         if font_choice != current_font:
             pdf.set_font(font_choice, size=12)
