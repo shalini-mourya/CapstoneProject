@@ -64,7 +64,7 @@ def generate_pdf(prompt, response):
     # Register fonts safely
     for f in fonts.values():
         if os.path.exists(f["path"]):
-            pdf.add_font(f["alias"], "", f["path"])
+            pdf.add_font(f["alias"], "", f["path"],uni=True)
 
     # Regex patterns
     hindi_pattern = re.compile(r'[\u0900-\u097F]')
