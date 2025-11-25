@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from fpdf import FPDF
 import os, base64, re
+import streamlit.components.v1 as components
 
 # --- Background Image ---
 with open("background.jpg", "rb") as f:
@@ -66,7 +67,7 @@ def generate_pdf(prompt, response):
     # Register fonts safely
     for f in fonts.values():
         if os.path.exists(f["path"]):
-            pdf.add_font(f["alias"], "", f["path"], uni=True)
+            pdf.add_font(f["alias"], "", f["path"])
 
     # Regex patterns
     hindi_pattern = re.compile(r'[\u0900-\u097F]')
@@ -102,33 +103,40 @@ def generate_pdf(prompt, response):
     	pdf.write(8, ch)
 
 
-    pdf_bytes = pdf.output(dest="S")
+    pdf_bytes = pdf.output()
     if isinstance(pdf_bytes, str):
-        pdf_bytes = pdf_bytes.encode("latin-1")  # convert string to bytes
+        pdf_bytes = pdf_bytes.encode("latin-1",errors="ignore")  # convert string to bytes
+    elif isinstance(pdf_bytes, bytearray):
+    	pdf_bytes = bytes(pdf_bytes)
     return pdf_bytes
 
  
 
 # --- Show PDF ---
-import tempfile
-import streamlit.components.v1 as components
 
 def show_pdf(pdf_bytes, width=800, height=600):
-    # Save PDF to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
-        tmp_file.write(pdf_bytes)
-        tmp_path = tmp_file.name
+    # Normalize to bytes
+    if isinstance(pdf_bytes, str):
+        pdf_bytes = pdf_bytes.encode("latin-1", errors="ignore")
+    elif isinstance(pdf_bytes, bytearray):
+        pdf_bytes = bytes(pdf_bytes)
 
-    # Create an iframe pointing to the file
+    # Convert to base64
+    base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+
+    # Use iframe for PDF preview
     pdf_display = f"""
-    <iframe src="file://{tmp_path}" 
-            width="{width}" 
-            height="{height}" 
-            type="application/pdf"></iframe>
+    <iframe src="data:application/pdf;base64,{base64_pdf}" 
+            width="100%" 
+            height="100%" 
+            style="border:none;">
+	    onload="this.style.height=this.contentWindow.document.body.scrollHeight + 'px';">
+        <p>📄 Preview not supported in this browser. 
+        Please use the download button above to view the PDF.</p>
+    </iframe>
     """
-    components.html(pdf_display, height=height)
 
-
+    components.html(pdf_display, height=800,scrolling=True)
     
 
 
