@@ -64,7 +64,7 @@ def generate_pdf(prompt, response):
     # Register fonts safely
     for f in fonts.values():
         if os.path.exists(f["path"]):
-            pdf.add_font(f["alias"], "", f["path"],uni=True)
+            pdf.add_font(f["alias"], "", f["path"], uni=True)
 
     # Regex patterns
     hindi_pattern = re.compile(r'[\u0900-\u097F]')
@@ -79,10 +79,20 @@ def generate_pdf(prompt, response):
             return fonts["default"]["alias"]
 
     text = f"Prompt:\n{prompt}\n\nResponse:\n{response}"
-    
+    # Split into paragraphs
+    paragraphs = text.split("\n")
+
+    for para in paragraphs:
+        # If paragraph contains Hindi, use Hindi font
+        if any(hindi_pattern.match(ch) for ch in para):
+            pdf.set_font(fonts["hindi"]["alias"], size=12)
+            pdf.multi_cell(0, 10, para)
+        else:
+            # For mixed content, handle inline emoji/Latin
+
 
     current_font = None
-    for ch in text:
+    for ch in para:
         font_choice = choose_font(ch)
         if font_choice not in pdf.fonts:
             font_choice = fonts["default"]["alias"]
@@ -91,8 +101,11 @@ def generate_pdf(prompt, response):
             pdf.set_font(font_choice, size=12)
             current_font = font_choice
 
-        pdf.multi_cell(0, 10, text)
-
+        try:
+            pdf.write(8, ch)
+        except Exception:
+            pdf.write(8, "?")
+    pdf.ln(10)  # move to next line after each paragraph
 
     # Output as bytes
     pdf_bytes = pdf.output(dest="S")
