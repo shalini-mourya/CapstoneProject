@@ -56,7 +56,7 @@ def generate_pdf(prompt, response):
 
     # Fonts (TTF supported in fpdf2)
     fonts = {
-        "hindi": {"alias": "Mangal", "path": os.path.join(os.getcwd(), "mangalb.ttf")},
+        "hindi": {"alias": "Mangal", "path": os.path.join(os.getcwd(), "Mangal Regular.ttf")},
         "emoji": {"alias": "Emoji", "path": os.path.join(os.getcwd(), "NotoEmoji-Regular.ttf")},
         "default": {"alias": "DejaVu", "path": os.path.join(os.getcwd(), "DejaVuSans.ttf")}
     }
@@ -64,7 +64,7 @@ def generate_pdf(prompt, response):
     # Register fonts safely
     for f in fonts.values():
         if os.path.exists(f["path"]):
-            pdf.add_font(f["alias"], "", f["path"], uni=True)
+            pdf.add_font(f["alias"], "", f["path"])
 
     # Regex patterns
     hindi_pattern = re.compile(r'[\u0900-\u097F]')
@@ -79,15 +79,13 @@ def generate_pdf(prompt, response):
             return fonts["default"]["alias"]
 
     text = f"Prompt:\n{prompt}\n\nResponse:\n{response}"
+    
 
     current_font = None
     for ch in text:
         font_choice = choose_font(ch)
-        if font_choice not in pdf.fonts:
-            font_choice = fonts["default"]["alias"]
-
         if font_choice != current_font:
-            pdf.set_font(font_choice, size=14)
+            pdf.set_font(font_choice, size=12)
             current_font = font_choice
 
         try:
@@ -96,8 +94,12 @@ def generate_pdf(prompt, response):
             pdf.write(8, "?")
 
     # Output as bytes
-    pdf_bytes = pdf.output(dest="S").encode("latin-1", errors="ignore")
+    pdf_bytes = pdf.output()
+    if isinstance(pdf_bytes, bytearray):
+        pdf_bytes = bytes(pdf_bytes)
     return pdf_bytes
+
+
 
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):
@@ -109,8 +111,6 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=True)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)
-    preview_height = st.sidebar.slider("Preview height (px)", min_value=400, max_value=1200, value=default_height, step=50)
-    preview_width = st.sidebar.slider("Preview width (px)", min_value=600, max_value=1200, value=default_width, step=50)
 
     # Download button
     st.download_button(
@@ -123,17 +123,17 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     # Inline preview
     if preview_option:
         base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
-        width_attr = "100%" if fit_to_container else f"{preview_width}px"
+        width_attr = "100%" if fit_to_container else f"{default_width}px"
         pdf_display = f"""
         <iframe src="data:application/pdf;base64,{base64_pdf}" 
                 width="{width_attr}" 
-                height="{preview_height}" 
+                height="{default_height}" 
                 style="border:none; background-color:white;">
             <p>📄 Inline preview not supported in this browser. 
             Please use the download button above to view the PDF.</p>
         </iframe>
         """
-        components.html(pdf_display, height=preview_height)
+        components.html(pdf_display, height=default_height)
 
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
