@@ -56,7 +56,7 @@ def generate_pdf(prompt, response):
 
     # Fonts (TTF supported in fpdf2)
     fonts = {
-        "hindi": {"alias": "Mangal", "path": "assets/fonts/Karma-Regular.ttf"},
+        "hindi": {"alias": "Mangal", "path": "assets/fonts/Mangal-Regular.ttf"},
         "emoji": {"alias": "Emoji", "path": "assets/fonts/NotoEmoji-Regular.ttf"},
         "default": {"alias": "DejaVu", "path": "assets/fonts/DejaVuSans.ttf"}
     }
@@ -93,9 +93,7 @@ def generate_pdf(prompt, response):
                 pdf.set_font(fonts["hindi"]["alias"], size=12)
             else:
                 pdf.set_font(fonts["default"]["alias"], size=12)
-            pdf.set_left_margin(10)
-            pdf.set_right_margin(10)  
-            pdf.multi_cell(0, 10, para)                     
+            pdf.multi_cell(0, 10, para)
         else:
             # For mixed content, handle inline emoji/Latin
             current_font = None
