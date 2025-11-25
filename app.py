@@ -112,7 +112,12 @@ def generate_pdf(prompt, response):
 # --- Show PDF ---
 def show_pdf(pdf_bytes, width=800, height=600):
     base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="{width}" height="{height}" type="application/pdf"></iframe>'
+    pdf_display = f"""
+    <embed src="data:application/pdf;base64,{base64_pdf}" 
+           type="application/pdf" 
+           width="{width}" 
+           height="{height}">
+    """
     st.markdown(pdf_display, unsafe_allow_html=True)
 
 # --- Download & Preview ---
