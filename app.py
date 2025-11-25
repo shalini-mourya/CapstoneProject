@@ -56,7 +56,7 @@ def generate_pdf(prompt, response):
 
     # Fonts (TTF supported in fpdf2)
     fonts = {
-        "hindi": {"alias": "Mangal", "path": "assets/fonts/Mangal-Regular.ttf"},
+        "hindi": {"alias": "Mangal", "path": "assets/fonts/Karma-Regular.ttf"},
         "emoji": {"alias": "Emoji", "path": "assets/fonts/NotoEmoji-Regular.ttf"},
         "default": {"alias": "DejaVu", "path": "assets/fonts/DejaVuSans.ttf"}
     }
