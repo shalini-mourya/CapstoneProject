@@ -94,7 +94,7 @@ def generate_pdf(prompt, response):
             else:
                 pdf.set_font(fonts["default"]["alias"], size=12)
             available_width = pdf.w - pdf.r_margin - pdf.x    
-            pdf.multi_cell(w=available_width, h=10, para)                       
+            pdf.multi_cell(available_width, 10, para)                       
         else:
             # For mixed content, handle inline emoji/Latin
             current_font = None
