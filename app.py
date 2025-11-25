@@ -110,15 +110,25 @@ def generate_pdf(prompt, response):
  
 
 # --- Show PDF ---
+import streamlit.components.v1 as components
+
 def show_pdf(pdf_bytes, width=800, height=600):
     base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
     pdf_display = f"""
-    <embed src="data:application/pdf;base64,{base64_pdf}" 
-           type="application/pdf" 
-           width="{width}" 
-           height="{height}">
+    <object data="data:application/pdf;base64,{base64_pdf}" 
+            type="application/pdf" 
+            width="{width}" 
+            height="{height}">
+        <p style="text-align:center; font-size:16px; color:#555;">
+            📄 Preview not supported in this browser. 
+            Please use the download button above to view the PDF.
+        </p>
+    </object>
     """
-    st.markdown(pdf_display, unsafe_allow_html=True)
+    components.html(pdf_display, height=height)
+
+    
+
 
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
