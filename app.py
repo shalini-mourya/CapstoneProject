@@ -110,22 +110,24 @@ def generate_pdf(prompt, response):
  
 
 # --- Show PDF ---
+import tempfile
 import streamlit.components.v1 as components
 
 def show_pdf(pdf_bytes, width=800, height=600):
-    base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+    # Save PDF to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+        tmp_file.write(pdf_bytes)
+        tmp_path = tmp_file.name
+
+    # Create an iframe pointing to the file
     pdf_display = f"""
-    <object data="data:application/pdf;base64,{base64_pdf}" 
-            type="application/pdf" 
+    <iframe src="file://{tmp_path}" 
             width="{width}" 
-            height="{height}">
-        <p style="text-align:center; font-size:16px; color:#555;">
-            📄 Preview not supported in this browser. 
-            Please use the download button above to view the PDF.
-        </p>
-    </object>
+            height="{height}" 
+            type="application/pdf"></iframe>
     """
     components.html(pdf_display, height=height)
+
 
     
 
