@@ -121,33 +121,37 @@ def show_pdf(pdf_bytes, width=800, height=600):
     elif isinstance(pdf_bytes, bytearray):
         pdf_bytes = bytes(pdf_bytes)
 
-    # Convert to base64
-    base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+     # Sidebar toggle
+    preview_option = st.sidebar.checkbox("Show inline PDF preview", value=True)
 
-    # Use iframe for PDF preview
-    pdf_display = f"""
-    <iframe src="data:application/pdf;base64,{base64_pdf}" 
-            width="100%" 
-            height="100%" 
-            style="border:none;">
-	    onload="this.style.height=this.contentWindow.document.body.scrollHeight + 'px';">
-        <p>📄 Preview not supported in this browser. 
-        Please use the download button above to view the PDF.</p>
-    </iframe>
-    """
+    # Download button
+    st.download_button(
+        "📄 Download PDF",
+        data=pdf_bytes,
+        file_name="Gemini_Response.pdf",
+        mime="application/pdf"
+    )
+# Inline preview
+    if preview_option:
+        base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+        pdf_display = f"""
+        <iframe src="data:application/pdf;base64,{base64_pdf}" 
+                width="{width}" 
+                height="{height}" 
+                style="border:none;">
+            <p>📄 Inline preview not supported in this browser. 
+            Please use the download button above to view the PDF.</p>
+        </iframe>
+        """
+        components.html(pdf_display, height=height)
 
-    components.html(pdf_display, height=800,scrolling=True)
-    
+
 
 
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
     pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])
-    if pdf_bytes:
-        st.download_button("📄 Download Response as PDF",
-                           data=pdf_bytes,
-                           file_name="Gemini_Response.pdf",
-                           mime="application/pdf")
+    if pdf_bytes:        
         st.markdown("### Preview PDF")
         show_pdf(pdf_bytes)
 
