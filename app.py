@@ -84,6 +84,9 @@ def generate_pdf(prompt, response):
     current_font = None
     for ch in text:
         font_choice = choose_font(ch)
+        if font_choice not in pdf.fonts:
+            font_choice = "DejaVu"
+
         if font_choice != current_font:
             pdf.set_font(font_choice, size=12)
             current_font = font_choice
@@ -103,9 +106,7 @@ def generate_pdf(prompt, response):
 
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):
-    if isinstance(pdf_bytes, str):
-        pdf_bytes = pdf_bytes.encode("latin-1", errors="ignore")
-    elif isinstance(pdf_bytes, bytearray):
+    if isinstance(pdf_bytes, bytearray):
         pdf_bytes = bytes(pdf_bytes)
 
     # Sidebar controls
