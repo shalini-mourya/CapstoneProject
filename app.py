@@ -17,7 +17,6 @@ page_bg_img = f"""
 """
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
-
 # --- Configure Gemini API ---
 try:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
@@ -33,12 +32,10 @@ if "response_text" not in st.session_state:
     st.session_state["response_text"] = ""
 
 # --- Streamlit UI ---
-# Display logo at the top
-
-st.title("ChatToPrint- converse and capture")
+st.title("ChatToPrint - converse and capture")
 st.markdown("Type your query and Gemini will respond instantly.")
 
-# --- Prompt Input (auto trigger) ---
+# --- Prompt Input ---
 user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
 if user_prompt.strip():
@@ -57,72 +54,63 @@ def generate_pdf(prompt, response):
     pdf = FPDF()
     pdf.add_page()
 
-    # Load fonts
+    # Fonts (TTF supported in fpdf2)
     fonts = {
-        "hindi": {"alias": "mangalb", "path": os.path.join(os.getcwd(), "mangalb.ttf")},
-        "emoji": {"alias": "NotoEmoji-Regular", "path": os.path.join(os.getcwd(), "NotoEmoji-Regular.ttf")},
-        "default": {"alias": "DejaVuSans", "path": os.path.join(os.getcwd(), "DejaVuSans.ttf")}
+        "hindi": {"alias": "Mangal", "path": os.path.join(os.getcwd(), "mangalb.ttf")},
+        "emoji": {"alias": "Emoji", "path": os.path.join(os.getcwd(), "NotoEmoji-Regular.ttf")},
+        "default": {"alias": "DejaVu", "path": os.path.join(os.getcwd(), "DejaVuSans.ttf")}
     }
 
     # Register fonts safely
     for f in fonts.values():
         if os.path.exists(f["path"]):
-            pdf.add_font(f["alias"], "", f["path"])
+            pdf.add_font(f["alias"], "", f["path"], uni=True)
 
     # Regex patterns
     hindi_pattern = re.compile(r'[\u0900-\u097F]')
-    emoji_pattern = re.compile(r'[\U0001F300-\U0001F5FF\U0001F600-\U0001F64F\U0001F680-\U0001F6FF]')
+    emoji_pattern = re.compile(r'[\U0001F300-\U0001FAFF]')
 
-    def choose_font(char):
-        if hindi_pattern.match(char):
+    def choose_font(ch):
+        if hindi_pattern.match(ch):
             return fonts["hindi"]["alias"]
-        elif emoji_pattern.match(char):
+        elif emoji_pattern.match(ch):
             return fonts["emoji"]["alias"]
         else:
             return fonts["default"]["alias"]
 
     text = f"Prompt:\n{prompt}\n\nResponse:\n{response}"
 
-    # Write character by character with font switching
     current_font = None
     for ch in text:
-    	if hindi_pattern.match(ch):
-        	font_choice = "mangalb"
-    	elif emoji_pattern.match(ch):
-        	font_choice = "NotoEmoji-Regular"
-    	else:
-        	font_choice = "DejaVuSans"
+        font_choice = choose_font(ch)
+        if font_choice not in pdf.fonts:
+            font_choice = fonts["default"]["alias"]
 
-    	if font_choice not in pdf.fonts:
-        	font_choice = "DejaVuSans"
+        if font_choice != current_font:
+            pdf.set_font(font_choice, size=14)
+            current_font = font_choice
 
-    	if font_choice != current_font:
-        	pdf.set_font(font_choice, size=14)
-        	current_font = font_choice
+        try:
+            pdf.write(8, ch)
+        except Exception:
+            pdf.write(8, "?")
 
-    	pdf.write(8, ch)
-
-
-    pdf_bytes = pdf.output()
-    if isinstance(pdf_bytes, str):
-        pdf_bytes = pdf_bytes.encode("latin-1",errors="ignore")  # convert string to bytes
-    elif isinstance(pdf_bytes, bytearray):
-    	pdf_bytes = bytes(pdf_bytes)
+    # Output as bytes
+    pdf_bytes = pdf.output(dest="S").encode("latin-1", errors="ignore")
     return pdf_bytes
 
- 
-
 # --- Show PDF ---
-
-def show_pdf(pdf_bytes, width=800, height=600):
-    # Normalize to bytes
+def show_pdf(pdf_bytes, default_width=800, default_height=600):
     if isinstance(pdf_bytes, str):
         pdf_bytes = pdf_bytes.encode("latin-1", errors="ignore")
     elif isinstance(pdf_bytes, bytearray):
         pdf_bytes = bytes(pdf_bytes)
 
-     # Sidebar toggle
+    # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=True)
+    fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)
+    preview_height = st.sidebar.slider("Preview height (px)", min_value=400, max_value=1200, value=default_height, step=50)
+    preview_width = st.sidebar.slider("Preview width (px)", min_value=600, max_value=1200, value=default_width, step=50)
 
     # Download button
     st.download_button(
@@ -131,32 +119,30 @@ def show_pdf(pdf_bytes, width=800, height=600):
         file_name="Gemini_Response.pdf",
         mime="application/pdf"
     )
-# Inline preview
+
+    # Inline preview
     if preview_option:
         base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+        width_attr = "100%" if fit_to_container else f"{preview_width}px"
         pdf_display = f"""
         <iframe src="data:application/pdf;base64,{base64_pdf}" 
-                width="{width}" 
-                height="{height}" 
-                style="border:none;">
+                width="{width_attr}" 
+                height="{preview_height}" 
+                style="border:none; background-color:white;">
             <p>📄 Inline preview not supported in this browser. 
             Please use the download button above to view the PDF.</p>
         </iframe>
         """
-        components.html(pdf_display, height=height)
-
-
-
+        components.html(pdf_display, height=preview_height)
 
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
     pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])
-    if pdf_bytes:        
-        st.markdown("### Preview PDF")
+    if pdf_bytes:
+        st.markdown("### Response PDF")
         show_pdf(pdf_bytes)
 
 # --- Sidebar Signature ---
-# Show logo in sidebar
 st.sidebar.image("chattoprint_logo.png", width=160)
 st.sidebar.markdown("---")
 st.sidebar.markdown("👩‍💻 Developed by **Shalini Mourya**")
