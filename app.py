@@ -93,8 +93,9 @@ def generate_pdf(prompt, response):
                 pdf.set_font(fonts["hindi"]["alias"], size=12)
             else:
                 pdf.set_font(fonts["default"]["alias"], size=12)
-            available_width = pdf.w - pdf.r_margin - pdf.x    
-            pdf.multi_cell(available_width, 10, para)                       
+            pdf.set_left_margin(10)
+            pdf.set_right_margin(10)  
+            pdf.multi_cell(0, 10, para)                     
         else:
             # For mixed content, handle inline emoji/Latin
             current_font = None
