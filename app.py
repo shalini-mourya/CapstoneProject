@@ -5,7 +5,7 @@ import os, base64, re
 import streamlit.components.v1 as components
 
 # --- Background Image ---
-with open("background.jpg", "rb") as f:
+with open("assets/images/background.jpg", "rb") as f:
     encoded = base64.b64encode(f.read()).decode()
 page_bg_img = f"""
 <style>
@@ -144,6 +144,6 @@ if st.session_state["response_text"] and user_prompt.strip():
         show_pdf(pdf_bytes)
 
 # --- Sidebar Signature ---
-st.sidebar.image("chattoprint_logo.png", width=160)
+st.sidebar.image("assets/images/chattoprint_logo.png", width=160)
 st.sidebar.markdown("---")
 st.sidebar.markdown("👩‍💻 Developed by **Shalini Mourya**")
