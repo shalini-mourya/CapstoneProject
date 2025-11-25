@@ -86,6 +86,9 @@ def generate_pdf(prompt, response):
         # If paragraph contains Hindi, use Hindi font
         if any(hindi_pattern.match(ch) for ch in para):
             pdf.set_font(fonts["hindi"]["alias"], size=12)
+            pdf.set_left_margin(10)
+            pdf.set_right_margin(10)
+
             pdf.multi_cell(0, 10, para)
         else:
             # For mixed content, handle inline emoji/Latin
@@ -100,9 +103,9 @@ def generate_pdf(prompt, response):
                     current_font = font_choice
 
                 try:
-                    pdf.write(8, ch)
+                    pdf.write(10, ch)
                 except Exception:
-                    pdf.write(8, "?")
+                    pdf.write(10, "?")
             pdf.ln(10)  # move to next line after each paragraph
 
     # Output as bytes
