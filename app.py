@@ -63,19 +63,20 @@ if user_prompt.strip():
             
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):
-   
+    
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
     
     if isinstance(pdf_bytes,bytearray):
         pdf_bytes=bytes(pdf_bytes)
-        st.download_button(
-            label="📄 Download PDF",
-            data=pdf_bytes,
-            file_name="conversation.pdf",
-            mime="application/pdf"
-        )  
+        
+    st.download_button(
+        label="📄 Download PDF",
+        data=pdf_bytes,
+        file_name="conversation.pdf",
+        mime="application/pdf"
+    )  
 
 
     # Inline preview
@@ -102,8 +103,7 @@ if st.session_state["response_text"] and user_prompt.strip():
     if pattern.search(user_prompt):
         pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])    
         st.markdown("### Response PDF")
-        show_pdf(pdf_bytes)
-        st.write("DEBUG:", user_prompt)
+        show_pdf(pdf_bytes)        
     else:
         st.info("Add 'generate pdf', 'save as pdf', 'make pdf', or 'print this' to your prompt if you want a PDF download.")
         
