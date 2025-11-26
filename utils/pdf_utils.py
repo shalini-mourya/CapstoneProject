@@ -1,0 +1,57 @@
+# generate_pdf() + regex + font logic
+from fpdf import FPDF
+import os, re
+# --- PDF Generation ---
+def generate_pdf(prompt, response, prefs=None):
+    pdf = FPDF()
+    pdf.add_page()
+
+    # Fonts (TTF supported in fpdf2)
+    fonts = prefs.get("fonts")if prefs and "fonts" in prefs else{
+        "hindi": {"alias": "Mangal", "path": "assets/fonts/Karma-Regular.ttf"},
+        "emoji": {"alias": "Emoji", "path": "assets/fonts/NotoEmoji-Regular.ttf"},
+        "default": {"alias": "DejaVu", "path": "assets/fonts/DejaVuSans.ttf"}
+    }
+
+    # Register fonts safely
+    for f in fonts.values():
+        if os.path.exists(f["path"]):
+            pdf.add_font(f["alias"], "", f["path"], uni=True)
+
+    # Regex patterns
+    hindi_pattern = re.compile(r'[\u0900-\u097F]')
+    emoji_pattern = re.compile(r'[\U0001F300-\U0001FAFF]')
+
+    def choose_font(ch):
+        if hindi_pattern.match(ch):
+            return fonts["hindi"]["alias"]
+        elif emoji_pattern.match(ch):
+            return fonts["emoji"]["alias"]
+        else:
+            return fonts["default"]["alias"]
+
+    text = f"Prompt:\n{prompt}\n\nResponse:\n{response}"
+    
+    current_font = None
+    for ch in text:
+        font_choice = choose_font(ch)
+        if font_choice != current_font:
+            pdf.set_font(font_choice, size=12)
+            current_font = font_choice
+
+        try:
+            pdf.write(8, ch)
+        except Exception:
+            pdf.write(8, "?")
+    
+    # Output as bytes
+    pdf_bytes = pdf.output(dest="S")
+    return {
+        "bytes": pdf_bytes,
+        "meta": {
+            "pages": pdf.page_no(),
+            "fonts_used": list(fonts.keys())
+        }
+    }
+
+
