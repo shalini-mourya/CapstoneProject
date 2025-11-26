@@ -52,15 +52,12 @@ class Agent:
     def handle(self, user_id: str, goal: str, context: dict) -> dict:
         ctx = {"user_id": user_id, "memory": self.memory, **context}
         plan = self.planner.make_plan(goal, ctx)
-        for steps in plan.steps:
-            tool = self.registry[step.tool]
-            result = tool.run(**step.args)
-
-
         last_result = None
-        for step in plan.steps:
+        for steps in plan.steps:            
             tool = self.registry[step.tool]
-            args = step.args.copy()
+            args = step.args.copy()            
+        
+       
             if last_result and "bytes" in last_result and "pdf_bytes" in tool.run.__code__.co_varnames:
                 args["pdf_bytes"] = last_result["bytes"]
 
