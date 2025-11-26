@@ -1,15 +1,33 @@
 # Agent, Planner, Memory classes -import and register the tool
-from agent_core import Agent, InMemoryStore
 from tools.pdf_tool import PDFTool
 from tools.storage_tool import StorageTool
 
+class InMemoryStore:
+    def __init__(self):
+        self.profiles = {}
+        self.artifacts = {}
 
+    def get_user_profile(self, user_id: str):
+        return self.profiles.get(user_id, {})
 
-memory = InMemoryStore()
-pdf_tool = PDFTool()
-storage_tool = StorageTool()
+    def update_user_profile(self, user_id: str, updates: dict):
+        base = self.get_user_profile(user_id)
+        base.update(updates)
+        self.profiles[user_id] = base
 
-agent = Agent(memory=memory, tools=[pdf_tool, storage_tool])
+    def add_artifact(self, user_id: str, meta: dict):
+        self.artifacts.setdefault(user_id, []).append(meta)
+
+    def list_artifacts(self, user_id: str, limit: int = 50):
+        return self.artifacts.get(user_id, [])[-limit:]
+
+class Planner:
+    def __init__(self, tools):
+        self.tools = tools
+
+    def make_plan(self, goal, context):
+        # Simple plan: always generate PDF
+        return [("pdf_generate", {"prompt": context["prompt"], "response": context["response"], "prefs": context.get("prefs")})]
 
 class Agent:
     def __init__(self, memory, tools):
