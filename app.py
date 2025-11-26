@@ -50,8 +50,8 @@ st.markdown("Type your query and Gemini will respond instantly.")
 
 
 # --- Show PDF ---
-def show_pdf(pdf_bytes, default_width=800, default_height=600):
-    
+def show_pdf(pdf_bytes, default_width=800, default_height=600):   
+
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
@@ -102,8 +102,9 @@ if user_prompt.strip():
     if any(trigger in prompt_lower for trigger in triggers):
         # Skip Gemini, just generate PDF from last response
         if st.session_state["response_text"]:
-            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""), st.session_state["response_text"])           
-            show_pdf(pdf_bytes)        
+            if st.sidebar.button("Save Response as PDF"):
+            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
+            show_pdf(pdf_bytes)
         else:
             st.warning("No response available yet to save as PDF.")
     else:
@@ -116,11 +117,15 @@ if user_prompt.strip():
                 st.session_state["last_query"] = user_prompt  # store the actual query
                 st.success("Response received!")
                 st.write(reply_text)
+                # Show guidance only if a response exists
+                if st.session_state["response_text"]:
+                    st.info("Tip: You can save this response as a PDF. Either type 'save as pdf' in the prompt box or use the sidebar button.")
+
             except Exception as e:
                 st.error(f"Gemini API error: {e}")
             
 
-# --- Sidebar Signature ---
+# --- Sidebar Signature ---        
 st.sidebar.image("assets/images/chattoprint_logo.png", width=160)
 st.sidebar.markdown("---")
 st.sidebar.markdown("👩‍💻 Developed by **Shalini Mourya**")
