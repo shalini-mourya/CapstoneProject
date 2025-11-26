@@ -48,7 +48,7 @@ st.title("ChatToPrint - converse and capture")
 st.markdown("Type your query and Gemini will respond instantly.")
 
 # --- Sidebar  ---        
-st.sidebar.image("assets/images/chattoprint_logo.png", width=100)
+st.sidebar.image("assets/images/chattoprint_logo.png", width=170)
 
 
 # --- Show PDF ---
