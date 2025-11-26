@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 import base64
 import streamlit.components.v1 as components
+from utils.pdf_utils import generate_pdf
 
 # --- Background Image ---
 with open("assets/images/background.jpg", "rb") as f:
