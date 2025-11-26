@@ -51,10 +51,10 @@ class Agent:
 
     def handle(self, user_id: str, goal: str, context: dict) -> dict:
         ctx = {"user_id": user_id, "memory": self.memory, **context}
-        steps= self.planner.make_plan(goal, ctx)
-        for tool_name, args in steps:
-            tool = self.registry[tool_name]
-            result = tool.run(**args)
+        plan = self.planner.make_plan(goal, ctx)
+        for steps in plan.steps:
+            tool = self.registry[step.tool]
+            result = tool.run(**step.args)
 
 
         last_result = None
