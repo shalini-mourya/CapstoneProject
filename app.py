@@ -63,9 +63,7 @@ if user_prompt.strip():
             
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):
-    #if isinstance(pdf_bytes, bytearray):
-    #    pdf_bytes = bytes(pdf_bytes)
-
+   
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)
@@ -79,6 +77,9 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
         }
         result = agent.handle(user_id="shalini", goal="generate", context=context)
         pdf_bytes = result["bytes"]
+        if isinstance(pdf_bytes,bytearray):
+            pdf_bytes=bytes(pdf_bytes)
+            
         st.download_button(
             "📄 Download PDF",
             data=pdf_bytes,
