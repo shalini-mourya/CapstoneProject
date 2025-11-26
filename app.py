@@ -125,7 +125,7 @@ if user_prompt.strip():
                 st.write(reply_text)
                 # Show guidance only if a response exists                
                 if st.session_state["response_text"]:
-                    st.info("Tip: You can save this response as a PDF. Either type 'save as pdf' in the prompt box or use the sidebar button.")
+                    st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
             except Exception as e:
                 st.error(f"Gemini API error: {e}")
             
