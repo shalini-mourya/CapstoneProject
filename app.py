@@ -47,6 +47,8 @@ if "response_text" not in st.session_state:
 st.title("ChatToPrint - converse and capture")
 st.markdown("Type your query and Gemini will respond instantly.")
 
+# --- Sidebar  ---        
+st.sidebar.image("assets/images/chattoprint_logo.png", width=100)
 
 
 # --- Show PDF ---
@@ -67,7 +69,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     )  
 
     # Inline preview
-    if preview_option:        
+    if preview_option:               
         base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
         width_attr = "100%" if fit_to_container else f"{default_width}px"
         pdf_display = f"""
@@ -91,7 +93,11 @@ if user_prompt.strip():
     triggers = [
         "generate pdf",
         "save as pdf",
+        "save pdf",
+        "save response as pdf",
+        "save this as pdf",      
         "make pdf",
+        "make response as pdf"
         "print pdf",
         "print this",
         "pdf please",
@@ -125,16 +131,13 @@ if user_prompt.strip():
             
 # --- Sidebar Save as PDF Button ---
 if st.session_state["response_text"]:
-    st.sidebar.markdown("You can save the latest response as a PDF:")
-    if st.sidebar.button("Save Response as PDF"):
+    savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
+    if savepdf_option:    
         pdf_bytes = generate_pdf(
             st.session_state.get("last_query", ""),   # original query
             st.session_state["response_text"]         # Gemini's reply
-        )
-        st.sidebar.markdown("### Response PDF")
+        )        
         show_pdf(pdf_bytes)
-
-# --- Sidebar Signature ---        
-st.sidebar.image("assets/images/chattoprint_logo.png", width=160)
+# --- Sidebar Signature ---   
 st.sidebar.markdown("---")
 st.sidebar.markdown("👩‍💻 Developed by **Shalini Mourya**")
