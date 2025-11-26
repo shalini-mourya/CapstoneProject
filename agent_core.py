@@ -66,6 +66,6 @@ class Agent:
 
             # Save artifact metadata
             if result.get("type") in ("pdf", "file"):
-                self.memory.add_artifact(user_id, {"goal": goal, **result.get("meta", {})})
+                self.memory.add_artifact(user_id, {"goal": goal, **result["meta"]})
 
         return last_result or {"status": "ok"}

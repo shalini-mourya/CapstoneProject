@@ -7,11 +7,16 @@ from utils.pdf_utils import generate_pdf
 class PDFTool:
     name: str = "generate_pdf"
 
-    def run(self, prompt: str, response: str, prefs: Dict[str, Any] = None) -> Dict[str, Any]:
-        pdf_result = generate_pdf(prompt, response, prefs)
+    def run(self, prompt: str, response: str, prefs=None, pdf_bytes=None):
+        pdf_bytes = bytearray(b"%PDF-...") 
+        #pdf_result = generate_pdf(prompt, response, prefs)
 
         return {
             "type": "pdf",
-            "bytes": pdf_result["bytes"],
-            "meta": pdf_result["meta"]
+            "bytes": pdf_bytes,   # raw binary data
+            "meta": {
+                "filename": "output.pdf",
+                "pages": 3,
+                "prefs": prefs
+            }
         }
