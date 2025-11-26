@@ -102,7 +102,6 @@ if user_prompt.strip():
     if any(trigger in prompt_lower for trigger in triggers):
         # Skip Gemini, just generate PDF from last response
         if st.session_state["response_text"]:
-            if st.sidebar.button("Save Response as PDF"):
             pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
             show_pdf(pdf_bytes)
         else:
@@ -124,6 +123,16 @@ if user_prompt.strip():
             except Exception as e:
                 st.error(f"Gemini API error: {e}")
             
+# --- Sidebar Save as PDF Button ---
+if st.session_state["response_text"]:
+    st.sidebar.markdown("You can save the latest response as a PDF:")
+    if st.sidebar.button("Save Response as PDF"):
+        pdf_bytes = generate_pdf(
+            st.session_state.get("last_query", ""),   # original query
+            st.session_state["response_text"]         # Gemini's reply
+        )
+        st.sidebar.markdown("### Response PDF")
+        show_pdf(pdf_bytes)
 
 # --- Sidebar Signature ---        
 st.sidebar.image("assets/images/chattoprint_logo.png", width=160)
