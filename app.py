@@ -95,14 +95,15 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
-# Define trigger phrases
-    triggers = ["generate pdf", "save as pdf", "make pdf", "print this"]
-    # Check if any trigger phrase is present in the prompt
-    if any(trigger in user_prompt.lower() for trigger in triggers):
-        pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])    
+# Regex pattern to catch variations
+    pattern = re.compile(r"(generate\s+a?\s*pdf|save\s+as\s+pdf|make\s+pdf|print\s+this|pdf\s+please|export\s+pdf)", re.IGNORECASE)
 
+    # Check if any trigger phrase is present in the prompt
+    if pattern.search(user_prompt):
+        pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])    
         st.markdown("### Response PDF")
         show_pdf(pdf_bytes)
+        st.write("DEBUG:", user_prompt)
     else:
         st.info("Add 'generate pdf', 'save as pdf', 'make pdf', or 'print this' to your prompt if you want a PDF download.")
         
