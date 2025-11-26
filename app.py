@@ -129,15 +129,18 @@ if user_prompt.strip():
             except Exception as e:
                 st.error(f"Gemini API error: {e}")
             
-# --- Sidebar Save as PDF Button ---
+# --- Sidebar Save as PDF option ---
 if st.session_state["response_text"]:
     savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
     if savepdf_option:    
         pdf_bytes = generate_pdf(
             st.session_state.get("last_query", ""),   # original query
             st.session_state["response_text"]         # Gemini's reply
-        )        
+        ) 
+        st.sidebar.success("PDF ready — check the main panel below for the download button.")
         show_pdf(pdf_bytes)
+else:
+    #show nothing
 # --- Sidebar Signature ---   
 st.sidebar.markdown("---")
 st.sidebar.markdown("👩‍💻 Developed by **Shalini Mourya**")
