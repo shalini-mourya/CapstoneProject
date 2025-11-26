@@ -62,9 +62,9 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
         pdf_bytes=bytes(pdf_bytes)
         
     st.download_button(
-        label="📄 Download PDF",
+        label="Download PDF",
         data=pdf_bytes,
-        file_name="conversation.pdf",
+        file_name="Gemini_Response.pdf",
         mime="application/pdf"
     )  
 
@@ -105,11 +105,10 @@ if user_prompt.strip():
     ]
     # Normalize prompt to lowercase
     prompt_lower = user_prompt.lower()
-    savepdf_option = st.sidebar.checkbox("Save response as PDF", value=False)
 
     if any(trigger in prompt_lower for trigger in triggers):
         # Skip Gemini, just generate PDF from last response
-        if st.session_state["response_text"] or savepdf_option:
+        if st.session_state["response_text"]:
             pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
             show_pdf(pdf_bytes)
         else:
