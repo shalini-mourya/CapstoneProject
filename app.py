@@ -105,6 +105,9 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
     pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])
+    if isinstance(pdf_bytes, bytearray):
+        pdf_bytes = bytes(pdf_bytes)  # normalize
+
     if pdf_bytes:
         st.markdown("### Response PDF")
         show_pdf(pdf_bytes)
