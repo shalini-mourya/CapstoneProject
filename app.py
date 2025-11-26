@@ -3,6 +3,18 @@ import google.generativeai as genai
 import base64
 import streamlit.components.v1 as components
 from utils.pdf_utils import generate_pdf
+from agent_core import Agent, InMemoryStore
+from tools.pdf_tool import PDFTool
+from tools.storage_tool import StorageTool
+
+# Create memory + tools
+memory = InMemoryStore()
+pdf_tool = PDFTool()
+storage_tool = StorageTool()
+
+# Create the agent object
+agent = Agent(memory=memory, tools=[pdf_tool, storage_tool])
+
 
 # --- Background Image ---
 with open("assets/images/background.jpg", "rb") as f:
@@ -51,8 +63,8 @@ if user_prompt.strip():
             
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):
-    if isinstance(pdf_bytes, bytearray):
-        pdf_bytes = bytes(pdf_bytes)
+    #if isinstance(pdf_bytes, bytearray):
+    #    pdf_bytes = bytes(pdf_bytes)
 
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=True)
@@ -66,10 +78,11 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
             "filename": "chat.pdf"
         }
         result = agent.handle(user_id="shalini", goal="generate", context=context)
+        pdf_bytes = pdf_result["bytes"]
         st.download_button(
             "📄 Download PDF",
-            data=result["bytes"],
-            file_name=context["filename"],
+            data=pdf_bytes,
+            file_name=chat.pdf,
             mime="application/pdf"
         )
 
