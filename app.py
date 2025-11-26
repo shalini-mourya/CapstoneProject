@@ -103,6 +103,9 @@ if st.session_state["response_text"] and user_prompt.strip():
 
         st.markdown("### Response PDF")
         show_pdf(pdf_bytes)
+    else:
+        st.info("👉 Add 'generate pdf', 'save as pdf', 'make pdf', or 'print this' to your prompt if you want a PDF download."
+        
 
 # --- Sidebar Signature ---
 st.sidebar.image("assets/images/chattoprint_logo.png", width=160)
