@@ -45,9 +45,7 @@ def generate_pdf(prompt, response, prefs=None):
             pdf.write(8, "?")
     
     # Output as bytes
-    pdf_bytes = pdf.output(dest="S")
-    if isinstance(pdf_bytes, bytearray):
-        pdf_bytes = bytes(pdf_bytes)
+    pdf_bytes = pdf.output(dest="S") 
     return pdf_bytes
 
 
