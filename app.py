@@ -67,27 +67,12 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)
-
-    
-
-
-    # Download button
-    if st.button("Generate PDF via Agent"):
-        context = {
-            "prompt": st.session_state.get("prompt", ""),
-            "response": st.session_state.get("response_text", ""),
-            "filename": "chat.pdf"
-        }
+     
         result = agent.handle(user_id="shalini", goal="generate", context=context)
         pdf_bytes = result["bytes"]
         if isinstance(pdf_bytes,bytearray):
             pdf_bytes=bytes(pdf_bytes)
-            
-        # Define trigger phrases
-        triggers = ["generate pdf", "save as pdf", "make pdf", "print this"]
-        # Check if any trigger phrase is present in the prompt
-        if any(trigger in user_prompt.lower() for trigger in triggers):
-            pdf_bytes = generate_pdf(prompt, response)
+         
 
 
         st.download_button(
@@ -118,7 +103,11 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
-    pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])
+    # Define trigger phrases
+    triggers = ["generate pdf", "save as pdf", "make pdf", "print this"]
+    # Check if any trigger phrase is present in the prompt
+    if any(trigger in user_prompt.lower() for trigger in triggers):
+        pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])
     
 
     if pdf_bytes:
