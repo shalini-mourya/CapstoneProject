@@ -57,7 +57,6 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
-    savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
     
     if isinstance(pdf_bytes,bytearray):
         pdf_bytes=bytes(pdf_bytes)
@@ -109,6 +108,7 @@ if user_prompt.strip():
     if any(trigger in prompt_lower for trigger in triggers):
         # Skip Gemini, just generate PDF from last response
         if st.session_state["response_text"]:
+            savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
             # --- Sidebar Save as PDF option ---            
             if savepdf_option:             
                 show_pdf(pdf_bytes)
