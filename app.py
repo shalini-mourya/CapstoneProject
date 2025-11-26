@@ -68,6 +68,9 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)
 
+    
+
+
     # Download button
     if st.button("Generate PDF via Agent"):
         context = {
@@ -80,12 +83,23 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
         if isinstance(pdf_bytes,bytearray):
             pdf_bytes=bytes(pdf_bytes)
             
+        # Define trigger phrases
+        triggers = ["generate pdf", "save as pdf", "make pdf", "print this"]
+        # Check if any trigger phrase is present in the prompt
+        if any(trigger in user_prompt.lower() for trigger in triggers):
+            pdf_bytes = generate_pdf(prompt, response)
+
+
         st.download_button(
-            "📄 Download PDF",
+            label="📄 Download PDF",
             data=pdf_bytes,
-            file_name="Gemini_Response.pdf",
+            file_name="conversation.pdf",
             mime="application/pdf"
         )
+        else:
+            st.write("👉 Type 'generate pdf' in your prompt if you want a PDF download.")
+
+
 
     # Inline preview
     if preview_option:
