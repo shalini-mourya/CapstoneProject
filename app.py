@@ -78,7 +78,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
             "filename": "chat.pdf"
         }
         result = agent.handle(user_id="shalini", goal="generate", context=context)
-        pdf_bytes = pdf_result["bytes"]
+        pdf_bytes = last_result["bytes"]
         st.download_button(
             "📄 Download PDF",
             data=pdf_bytes,
