@@ -105,15 +105,13 @@ if user_prompt.strip():
     ]
     # Normalize prompt to lowercase
     prompt_lower = user_prompt.lower()
+    savepdf_option = st.sidebar.checkbox("Save response as PDF", value=False)
+
     if any(trigger in prompt_lower for trigger in triggers):
         # Skip Gemini, just generate PDF from last response
-        if st.session_state["response_text"]:
-            savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
-            # --- Sidebar Save as PDF option ---            
-            if savepdf_option:             
-                show_pdf(pdf_bytes)
-                pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
-                st.sidebar.success("PDF ready — check the main panel below for the download button.")
+        if st.session_state["response_text"] or savepdf_option:
+            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
+            show_pdf(pdf_bytes)
         else:
             st.warning("No response available yet to save as PDF.")
     else:
@@ -127,7 +125,7 @@ if user_prompt.strip():
                 st.success("Response received!")
                 st.write(reply_text)
                 # Show guidance only if a response exists                
-                if st.session_state["response_text"]:                   
+                if st.session_state["response_text"]:
                     st.info("Tip: You can save this response as a PDF. Either type 'save as pdf' in the prompt box or use the sidebar button.")
             except Exception as e:
                 st.error(f"Gemini API error: {e}")
