@@ -1,6 +1,7 @@
 # Agent, Planner, Memory classes -import and register the tool
 from tools.pdf_tool import PDFTool
 from tools.storage_tool import StorageTool
+from dataclasses import dataclass
 
 class InMemoryStore:
     def __init__(self):
