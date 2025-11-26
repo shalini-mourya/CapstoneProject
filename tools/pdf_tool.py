@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from typing import Dict, Any
 from utils.pdf_utils import generate_pdf
+from fpdf import FPDF 
 
 @dataclass
 class PDFTool:
