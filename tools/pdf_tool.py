@@ -5,7 +5,7 @@ from utils.pdf_utils import generate_pdf
 
 @dataclass
 class PDFTool:
-    name: str = "pdf_generate"
+    name: str = "generate_pdf"
 
     def run(self, prompt: str, response: str, prefs: Dict[str, Any] = None) -> Dict[str, Any]:
         pdf_result = generate_pdf(prompt, response, prefs)
