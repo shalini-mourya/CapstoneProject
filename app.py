@@ -95,7 +95,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 
 # --- Download & Preview ---
 if st.session_state["response_text"] and user_prompt.strip():
-    # Define trigger phrases
+# Define trigger phrases
     triggers = ["generate pdf", "save as pdf", "make pdf", "print this"]
     # Check if any trigger phrase is present in the prompt
     if any(trigger in user_prompt.lower() for trigger in triggers):
