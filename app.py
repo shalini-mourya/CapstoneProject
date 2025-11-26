@@ -66,10 +66,8 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
         mime="application/pdf"
     )  
 
-
     # Inline preview
-    if preview_option:
-        st.markdown("### Response PDF")
+    if preview_option:        
         base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
         width_attr = "100%" if fit_to_container else f"{default_width}px"
         pdf_display = f"""
@@ -94,7 +92,7 @@ if user_prompt.strip():
          # Check if any pattern is present in the prompt
     if pattern.search(user_prompt):
         # Skip Gemini, just generate PDF from last response
-        if st.session_state["response_text"] and user_prompt.strip():
+        if st.session_state["response_text"]:
             pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])           
             show_pdf(pdf_bytes)        
         else:
