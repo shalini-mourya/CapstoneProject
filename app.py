@@ -73,7 +73,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     # Download button
     if st.button("Generate PDF via Agent"):
         context = {
-            "prompt": st.session_state.get("prompt_text", ""),
+            "prompt": st.session_state.get("prompt", ""),
             "response": st.session_state.get("response_text", ""),
             "filename": "chat.pdf"
         }
@@ -82,7 +82,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
         st.download_button(
             "📄 Download PDF",
             data=pdf_bytes,
-            file_name=chat.pdf,
+            file_name="Gemini_Response.pdf",
             mime="application/pdf"
         )
 
