@@ -94,7 +94,7 @@ if user_prompt.strip():
          # Check if any pattern is present in the prompt
     if pattern.search(user_prompt):
         # Skip Gemini, just generate PDF from last response
-        if st.session_state["response_text"]:
+        if st.session_state["response_text"] and user_prompt.strip():
             pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])           
             show_pdf(pdf_bytes)        
         else:
