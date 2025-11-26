@@ -53,7 +53,7 @@ class Agent:
         ctx = {"user_id": user_id, "memory": self.memory, **context}
         plan = self.planner.make_plan(goal, ctx)
         last_result = None
-        for steps in plan.steps:            
+        for step in plan.steps:            
             tool = self.registry[step.tool]
             args = step.args.copy()            
         
