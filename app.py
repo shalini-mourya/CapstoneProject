@@ -67,7 +67,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     #    pdf_bytes = bytes(pdf_bytes)
 
     # Sidebar controls
-    preview_option = st.sidebar.checkbox("Show inline PDF preview", value=True)
+    preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)
 
     # Download button
