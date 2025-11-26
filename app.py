@@ -89,6 +89,7 @@ user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 if user_prompt.strip():
     # Regex pattern to catch variations
     pattern = re.compile(r"(generate\s+a?\s*pdf|save\s+as\s+pdf|make\s+pdf|print\s+this|pdf\s+please|export\s+pdf)", re.IGNORECASE)
+    st.write("DEBUG trigger match:", bool(pattern.search(user_prompt)))
          # Check if any pattern is present in the prompt
     if pattern.search(user_prompt):
         # Skip Gemini, just generate PDF from last response
