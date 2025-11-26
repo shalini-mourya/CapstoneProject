@@ -87,7 +87,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
                 width="{width_attr}" 
                 height="{default_height}" 
                 style="border:none; background-color:white;">
-            <p>📄 Inline preview not supported in this browser. 
+            <p> Inline preview not supported in this browser. 
             Please use the download button above to view the PDF.</p>
         </iframe>
         """
@@ -104,7 +104,7 @@ if st.session_state["response_text"] and user_prompt.strip():
         st.markdown("### Response PDF")
         show_pdf(pdf_bytes)
     else:
-        st.info("👉 Add 'generate pdf', 'save as pdf', 'make pdf', or 'print this' to your prompt if you want a PDF download."
+        st.info("Add 'generate pdf', 'save as pdf', 'make pdf', or 'print this' to your prompt if you want a PDF download.")
         
 
 # --- Sidebar Signature ---
