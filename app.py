@@ -67,8 +67,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
     fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
-    result = agent.handle(user_id="shalini", goal="generate", context=context)
-    pdf_bytes = result["bytes"]
+    
     if isinstance(pdf_bytes,bytearray):
         pdf_bytes=bytes(pdf_bytes)
         st.download_button(
@@ -76,10 +75,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
             data=pdf_bytes,
             file_name="conversation.pdf",
             mime="application/pdf"
-        )
-    else:
-        st.write("👉 Type 'generate pdf' in your prompt if you want a PDF download.")
-
+        )  
 
 
     # Inline preview
@@ -103,10 +99,8 @@ if st.session_state["response_text"] and user_prompt.strip():
     triggers = ["generate pdf", "save as pdf", "make pdf", "print this"]
     # Check if any trigger phrase is present in the prompt
     if any(trigger in user_prompt.lower() for trigger in triggers):
-        pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])
-    
+        pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])    
 
-    if pdf_bytes:
         st.markdown("### Response PDF")
         show_pdf(pdf_bytes)
 
