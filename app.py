@@ -139,8 +139,7 @@ if st.session_state["response_text"]:
         ) 
         st.sidebar.success("PDF ready — check the main panel below for the download button.")
         show_pdf(pdf_bytes)
-else:
-    #show nothing
+
 # --- Sidebar Signature ---   
 st.sidebar.markdown("---")
 st.sidebar.markdown("👩‍💻 Developed by **Shalini Mourya**")
