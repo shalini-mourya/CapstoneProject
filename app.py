@@ -108,8 +108,12 @@ if user_prompt.strip():
     if any(trigger in prompt_lower for trigger in triggers):
         # Skip Gemini, just generate PDF from last response
         if st.session_state["response_text"]:
-            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
+            # --- Sidebar Save as PDF option ---
+            savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
+            if savepdf_option:             
             show_pdf(pdf_bytes)
+            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
+            st.sidebar.success("PDF ready — check the main panel below for the download button.")
         else:
             st.warning("No response available yet to save as PDF.")
     else:
@@ -123,17 +127,7 @@ if user_prompt.strip():
                 st.success("Response received!")
                 st.write(reply_text)
                 # Show guidance only if a response exists                
-                if st.session_state["response_text"]:
-                    # --- Sidebar Save as PDF option ---
-                    savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
-                    if savepdf_option:    
-                        pdf_bytes = generate_pdf(
-                            st.session_state.get("last_query", ""),   # original query
-                            st.session_state["response_text"]         # Gemini's reply
-                        ) 
-                        st.sidebar.success("PDF ready — check the main panel below for the download button.")
-                        show_pdf(pdf_bytes)
-                    
+                if st.session_state["response_text"]:                   
                     st.info("Tip: You can save this response as a PDF. Either type 'save as pdf' in the prompt box or use the sidebar button.")
             except Exception as e:
                 st.error(f"Gemini API error: {e}")
