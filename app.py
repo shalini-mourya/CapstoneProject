@@ -87,14 +87,22 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
 if user_prompt.strip():
-    # Regex pattern to catch variations
-    pattern = re.compile(r"(generate\s+a?\s*pdf|save\s+as\s+pdf|make\s+pdf|print\s+this|pdf\s+please|export\s+pdf)", re.IGNORECASE)
-    st.write("DEBUG trigger match:", bool(pattern.search(user_prompt)))
-         # Check if any pattern is present in the prompt
-    if pattern.search(user_prompt):
+    # Define trigger phrases (lowercase for consistency)
+    triggers = [
+        "generate pdf",
+        "save as pdf",
+        "make pdf",
+        "print pdf",
+        "print this",
+        "pdf please",
+        "export pdf"
+    ]
+    # Normalize prompt to lowercase
+    prompt_lower = user_prompt.lower()
+    if any(trigger in prompt_lower for trigger in triggers):
         # Skip Gemini, just generate PDF from last response
         if st.session_state["response_text"]:
-            pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])           
+            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""), st.session_state["response_text"])           
             show_pdf(pdf_bytes)        
         else:
             st.warning("No response available yet to save as PDF.")
@@ -105,6 +113,7 @@ if user_prompt.strip():
                 response = model.generate_content(user_prompt)
                 reply_text = response.text
                 st.session_state["response_text"] = reply_text
+                st.session_state["last_query"] = user_prompt  # store the actual query
                 st.success("Response received!")
                 st.write(reply_text)
             except Exception as e:
