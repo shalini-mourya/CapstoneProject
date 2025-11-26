@@ -66,23 +66,19 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
    
     # Sidebar controls
     preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
-    fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)
-     
-        result = agent.handle(user_id="shalini", goal="generate", context=context)
-        pdf_bytes = result["bytes"]
-        if isinstance(pdf_bytes,bytearray):
-            pdf_bytes=bytes(pdf_bytes)
-         
-
-
+    fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
+    result = agent.handle(user_id="shalini", goal="generate", context=context)
+    pdf_bytes = result["bytes"]
+    if isinstance(pdf_bytes,bytearray):
+        pdf_bytes=bytes(pdf_bytes)
         st.download_button(
             label="📄 Download PDF",
             data=pdf_bytes,
             file_name="conversation.pdf",
             mime="application/pdf"
         )
-        else:
-            st.write("👉 Type 'generate pdf' in your prompt if you want a PDF download.")
+    else:
+        st.write("👉 Type 'generate pdf' in your prompt if you want a PDF download.")
 
 
 
