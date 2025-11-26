@@ -20,14 +20,27 @@ class InMemoryStore:
 
     def list_artifacts(self, user_id: str, limit: int = 50):
         return self.artifacts.get(user_id, [])[-limit:]
+@dataclass
+class PlanStep:
+    tool: str
+    args: dict
+
+@dataclass
+class Plan:
+    steps: list
 
 class Planner:
     def __init__(self, tools):
         self.tools = tools
 
     def make_plan(self, goal, context):
-        # Simple plan: always generate PDF
-        return [("pdf_generate", {"prompt": context["prompt"], "response": context["response"], "prefs": context.get("prefs")})]
+        return Plan(steps=[
+            PlanStep(tool="pdf_generate", args={
+                "prompt": context["prompt"],
+                "response": context["response"],
+                "prefs": context.get("prefs")
+            })
+        ])
 
 class Agent:
     def __init__(self, memory, tools):
@@ -37,7 +50,11 @@ class Agent:
 
     def handle(self, user_id: str, goal: str, context: dict) -> dict:
         ctx = {"user_id": user_id, "memory": self.memory, **context}
-        plan = self.planner.make_plan(goal, ctx)
+        steps= self.planner.make_plan(goal, ctx)
+        for tool_name, args in steps:
+            tool = self.registry[tool_name]
+            result = tool.run(**args)
+
 
         last_result = None
         for step in plan.steps:
