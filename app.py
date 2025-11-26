@@ -47,32 +47,8 @@ if "response_text" not in st.session_state:
 st.title("ChatToPrint - converse and capture")
 st.markdown("Type your query and Gemini will respond instantly.")
 
-# --- Prompt Input ---
-user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
-if user_prompt.strip():
-    # Regex pattern to catch variations
-    pattern = re.compile(r"(generate\s+a?\s*pdf|save\s+as\s+pdf|make\s+pdf|print\s+this|pdf\s+please|export\s+pdf)", re.IGNORECASE)
-         # Check if any pattern is present in the prompt
-    if pattern.search(user_prompt):
-        # Skip Gemini, just generate PDF from last response
-        if st.session_state["response_text"]:
-            pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])           
-            show_pdf(pdf_bytes)        
-        else:
-            st.warning("No response available yet to save as PDF.")
-    else:
-        # Normal flow → ask Gemini    
-        with st.spinner("Gemini is thinking..."):
-            try:
-                response = model.generate_content(user_prompt)
-                reply_text = response.text
-                st.session_state["response_text"] = reply_text
-                st.success("Response received!")
-                st.write(reply_text)
-            except Exception as e:
-                st.error(f"Gemini API error: {e}")
-            
+
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):
     
@@ -107,6 +83,34 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
         """
         components.html(pdf_display, height=default_height)  
         
+
+
+# --- Prompt Input ---
+user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
+
+if user_prompt.strip():
+    # Regex pattern to catch variations
+    pattern = re.compile(r"(generate\s+a?\s*pdf|save\s+as\s+pdf|make\s+pdf|print\s+this|pdf\s+please|export\s+pdf)", re.IGNORECASE)
+         # Check if any pattern is present in the prompt
+    if pattern.search(user_prompt):
+        # Skip Gemini, just generate PDF from last response
+        if st.session_state["response_text"]:
+            pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])           
+            show_pdf(pdf_bytes)        
+        else:
+            st.warning("No response available yet to save as PDF.")
+    else:
+        # Normal flow → ask Gemini    
+        with st.spinner("Gemini is thinking..."):
+            try:
+                response = model.generate_content(user_prompt)
+                reply_text = response.text
+                st.session_state["response_text"] = reply_text
+                st.success("Response received!")
+                st.write(reply_text)
+            except Exception as e:
+                st.error(f"Gemini API error: {e}")
+            
 
 # --- Sidebar Signature ---
 st.sidebar.image("assets/images/chattoprint_logo.png", width=160)
