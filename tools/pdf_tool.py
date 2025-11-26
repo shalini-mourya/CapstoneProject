@@ -9,8 +9,6 @@ class PDFTool:
 
     def run(self, prompt: str, response: str, prefs=None, pdf_bytes=None):
         pdf_bytes = bytearray(b"%PDF-...") 
-        #pdf_result = generate_pdf(prompt, response, prefs)
-
         return {
             "type": "pdf",
             "bytes": pdf_bytes,   # raw binary data
