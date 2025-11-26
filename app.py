@@ -51,15 +51,27 @@ st.markdown("Type your query and Gemini will respond instantly.")
 user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
 if user_prompt.strip():
-    with st.spinner("Gemini is thinking..."):
-        try:
-            response = model.generate_content(user_prompt)
-            reply_text = response.text
-            st.session_state["response_text"] = reply_text
-            st.success("Response received!")
-            st.write(reply_text)
-        except Exception as e:
-            st.error(f"Gemini API error: {e}")
+    # Regex pattern to catch variations
+    pattern = re.compile(r"(generate\s+a?\s*pdf|save\s+as\s+pdf|make\s+pdf|print\s+this|pdf\s+please|export\s+pdf)", re.IGNORECASE)
+         # Check if any pattern is present in the prompt
+        if pattern.search(user_prompt):
+             # Skip Gemini, just generate PDF from last response
+             if st.session_state["response_text"]:
+                pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])           
+                show_pdf(pdf_bytes)        
+            else:
+                st.warning("No response available yet to save as PDF.")
+        else:
+            # Normal flow → ask Gemini    
+            with st.spinner("Gemini is thinking..."):
+                try:
+                    response = model.generate_content(user_prompt)
+                    reply_text = response.text
+                    st.session_state["response_text"] = reply_text
+                    st.success("Response received!")
+                    st.write(reply_text)
+                except Exception as e:
+                    st.error(f"Gemini API error: {e}")
             
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):
@@ -81,6 +93,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 
     # Inline preview
     if preview_option:
+        st.markdown("### Response PDF")
         base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
         width_attr = "100%" if fit_to_container else f"{default_width}px"
         pdf_display = f"""
@@ -92,20 +105,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
             Please use the download button above to view the PDF.</p>
         </iframe>
         """
-        components.html(pdf_display, height=default_height)
-
-# --- Download & Preview ---
-if st.session_state["response_text"] and user_prompt.strip():
-# Regex pattern to catch variations
-    pattern = re.compile(r"(generate\s+a?\s*pdf|save\s+as\s+pdf|make\s+pdf|print\s+this|pdf\s+please|export\s+pdf)", re.IGNORECASE)
-
-    # Check if any trigger phrase is present in the prompt
-    if pattern.search(user_prompt):
-        pdf_bytes = generate_pdf(user_prompt, st.session_state["response_text"])    
-        st.markdown("### Response PDF")
-        show_pdf(pdf_bytes)        
-    else:
-        st.info("Add 'generate pdf', 'save as pdf', 'make pdf', or 'print this' to your prompt if you want a PDF download.")
+        components.html(pdf_display, height=default_height)  
         
 
 # --- Sidebar Signature ---
