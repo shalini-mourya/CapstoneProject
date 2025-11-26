@@ -1,6 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
-import base64
+import base64, re
 import streamlit.components.v1 as components
 from utils.pdf_utils import generate_pdf
 from agent_core import Agent, InMemoryStore
