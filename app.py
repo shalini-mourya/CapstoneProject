@@ -111,9 +111,9 @@ if user_prompt.strip():
             # --- Sidebar Save as PDF option ---
             savepdf_option = st.sidebar.checkbox("Save as PDF", value=False)
             if savepdf_option:             
-            show_pdf(pdf_bytes)
-            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
-            st.sidebar.success("PDF ready — check the main panel below for the download button.")
+                show_pdf(pdf_bytes)
+                pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
+                st.sidebar.success("PDF ready — check the main panel below for the download button.")
         else:
             st.warning("No response available yet to save as PDF.")
     else:
