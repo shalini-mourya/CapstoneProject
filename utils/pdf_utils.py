@@ -45,7 +45,7 @@ def generate_pdf(prompt, response, prefs=None):
             pdf.write(8, "?")
     
     # Output as bytes
-    pdf_bytes = pdf.output(dest="S")
+    pdf_bytes = pdf.output(dest="S").encode("latin1")
     return pdf_bytes
 
 
