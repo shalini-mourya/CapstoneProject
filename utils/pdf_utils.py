@@ -46,12 +46,6 @@ def generate_pdf(prompt, response, prefs=None):
     
     # Output as bytes
     pdf_bytes = pdf.output(dest="S")
-    return {
-        "bytes": pdf_bytes,
-        "meta": {
-            "pages": pdf.page_no(),
-            "fonts_used": list(fonts.keys())
-        }
-    }
+    return pdf_bytes
 
 
