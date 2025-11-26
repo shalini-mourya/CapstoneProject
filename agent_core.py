@@ -36,7 +36,7 @@ class Planner:
 
     def make_plan(self, goal, context):
         return Plan(steps=[
-            PlanStep(tool="pdf_generate", args={
+            PlanStep(tool="generate_pdf", args={
                 "prompt": context["prompt"],
                 "response": context["response"],
                 "prefs": context.get("prefs")
