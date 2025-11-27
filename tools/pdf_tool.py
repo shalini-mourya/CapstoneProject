@@ -34,16 +34,22 @@ class PDFTool:
         last_query = memory_manager.get("last_query")
         if not last_response:
             return {
-                "reply_text": "I can't save a PDF yet.",
-                "message": "No existing response to save as PDF. Please ask a question first, then type 'save as pdf'."
+                "reply_text": "",
+                "message": "**PDF Save Error:** Please give your query to Gemini first. The 'save as pdf' command must be used *after* a response is shown"
             }
 
-        pdf_bytes = generate_pdf(last_query,last_response)
+        try:
+            pdf_bytes = generate_pdf(last_query, last_response)
+        except Exception as e:
+            return {
+                "reply_text": last_response,
+                "message": f"Error generating PDF: {e}"
+            }
         
               # Return structured data instead of calling UI directly
         return {
             "reply_text": last_response,       # show the last Gemini response
-            "message": "PDF generated from the last response.",
+            "message": "Document saved as PDF. Use the button to download or preview.",
             "pdf_bytes": pdf_bytes             # for download/preview
         }
 
