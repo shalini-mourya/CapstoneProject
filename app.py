@@ -44,10 +44,11 @@ st.markdown("Type your query and Gemini will respond instantly.")
 st.sidebar.image("assets/images/chattoprint_logo.png", width=100)
 
 # --- Show PDF ---
-def show_pdf(pdf_bytes, default_width=800, default_height=600):          
+def show_pdf(pdf_bytes, default_width=800, default_height=600):   
+           
     if isinstance(pdf_bytes,bytearray):
-        pdf_bytes=bytes(pdf_bytes)
-        
+        pdf_bytes=bytes(pdf_bytes)    
+    
     st.download_button(
         label="Download PDF",
         data=pdf_bytes,
@@ -58,7 +59,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     # Inline preview
                    
     base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
-    width_attr = "100%" if fit_to_container else f"{default_width}px"
+    width_attr = "100%"
     pdf_display = f"""
     <iframe src="data:application/pdf;base64,{base64_pdf}" 
             width="{width_attr}" 
