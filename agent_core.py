@@ -33,9 +33,14 @@ class Agent:
                 return tool.handle(user_prompt, self.memory)
             
         # Get response from Gemini
-        response = self.model.generate_content(user_prompt)
-        response_text = response.text
-
+        try:
+            response = self.model.generate_content(user_prompt)
+            response_text = response.text
+        except Exception as e:
+            return {
+                "reply_text": "",
+                "message": f"Gemini API Error: {e}"
+            }
 
         # Update memory immediately
         self.memory.update(user_prompt, response_text)        

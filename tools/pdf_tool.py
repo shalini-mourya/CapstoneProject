@@ -24,10 +24,13 @@ class PDFTool:
     def handle(self, prompt: str, memory_manager) -> dict:       
         
         # Get the last response text from memory
-        last_response = memory_manager.get("reply_text")
+        last_response = memory_manager.get("response_text")
        
         if not last_response:
-            return {"message": "No response available yet to save as PDF."}
+            return {
+                "reply_text": "I can't save a PDF yet.",
+                "message": "No response available yet to save as PDF."
+            }
 
         pdf_bytes = generate_pdf(last_response)
         

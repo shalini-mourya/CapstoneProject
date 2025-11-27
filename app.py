@@ -1,10 +1,9 @@
 import streamlit as st
 import google.generativeai as genai
-import base64, re
+import base64
 import streamlit.components.v1 as components
-from utils.pdf_utils import generate_pdf
 from agent_core import Agent, MemoryManager
-#from tools.pdf_tool import PDFTool
+
 
 # --- Background Image ---
 with open("assets/images/background.jpg", "rb") as f:
@@ -30,14 +29,17 @@ except Exception as e:
 model = genai.GenerativeModel("gemini-2.5-flash")
     
 # --- Memory + Tools + Agent ---
-memory = MemoryManager()
-#pdf_tool = PDFTool()
-agent = Agent(model=model, memory_manager=MemoryManager())
+if "memory_manager" not in st.session_state:
+    st.session_state["memory_manager"] = MemoryManager()
+if "agent" not in st.session_state:
+    # Pass the model and the unique memory manager instance
+    st.session_state["agent"] = Agent(
+        model=model, 
+        memory_manager=st.session_state["memory_manager"]
+    )
 
-# --- Session State ---
-for key in ["response_text","last_query"]:
-    if key not in st.session_state:
-        st.session_state["response_text"] = ""
+agent = st.session_state["agent"]
+
 
 # --- Streamlit UI ---
 st.title("ChatToPrint - converse and capture")
@@ -84,7 +86,8 @@ if user_prompt.strip():
             result = agent.run(user_prompt)
                         
             #  Show response
-            if result.get("reply_text"):                
+            if result.get("reply_text"):  
+                st.subheader("Gemini Response")              
                 st.write(result["reply_text"])
                 
             if "message" in result and result["message"] != result.get("reply_text"):
@@ -94,7 +97,7 @@ if user_prompt.strip():
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])  
                               
-            if result.get("reply_text"):
+            if result.get("reply_text") and "pdf_bytes" not in result:
                 st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")           
