@@ -12,14 +12,14 @@ class PDFTool:
         # Get last response from memory
         last_response = memory.get("response_text")
         last_query = memory.get("last_query")
+        print(f"[PDFTool] last_query={last_query}, last_response={last_response[:50]}...")
 
         if not last_response or last_response.strip() == "":
             return {"message": "No response available yet to save as PDF."}
 
         pdf_bytes = generate_pdf(last_query or "User Query", last_response)
         
-        print(f"[PDFTool] last_query={last_query}, last_response={last_response[:50]}...")
-        # Return structured data instead of calling UI directly
+              # Return structured data instead of calling UI directly
         return {
             "message": "PDF generated from the last response.",
             "pdf_bytes": pdf_bytes
