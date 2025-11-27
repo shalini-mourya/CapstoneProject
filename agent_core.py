@@ -1,23 +1,16 @@
 import google.generativeai as genai
 
 class InMemoryStore:
+    """Simple key-value memory store for agent context."""
+
     def __init__(self):
-        self.profiles = {}
-        self.artifacts = {}
+        self.store = {}
 
-    def get_user_profile(self, user_id: str):
-        return self.profiles.get(user_id, {})
+     def set(self, key, value):
+        self.store[key] = value
 
-    def update_user_profile(self, user_id: str, updates: dict):
-        base = self.get_user_profile(user_id)
-        base.update(updates)
-        self.profiles[user_id] = base
-
-    def add_artifact(self, user_id: str, meta: dict):
-        self.artifacts.setdefault(user_id, []).append(meta)
-
-    def list_artifacts(self, user_id: str, limit: int = 50):
-        return self.artifacts.get(user_id, [])[-limit:]
+    def get(self, key, default=None):
+        return self.store.get(key, default)
 
 class Agent:
     """Agent that routes prompts to tools or Gemini by default."""
@@ -32,9 +25,9 @@ class Agent:
         
         # Route to tools
         for tool in self.tools:
-            # Check tools
-            if tool.can_handle(prompt_lower):
+           if hasattr(tool, "can_handle") and tool.can_handle(prompt_lower):
                 return tool.handle(prompt_lower, self.memory)
+
 
         # Default → Gemini        
         model = genai.GenerativeModel("gemini-2.5-flash")
