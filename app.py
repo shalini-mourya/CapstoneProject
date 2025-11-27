@@ -94,7 +94,7 @@ if user_prompt.strip():
                 
             if "message" in result:
                 st.info(result["message"])
-            else "pdf_bytes" in result:
+            elif "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])                
             if st.session_state["response_text"]:
