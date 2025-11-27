@@ -61,13 +61,13 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
     width_attr = "100%"
     pdf_display = f"""
-    <iframe src="data:application/pdf;base64,{base64_pdf}" 
+        <iframe src="data:application/pdf;base64,{base64_pdf}" 
             width="{width_attr}" 
             height="{default_height}" 
             style="border:none; background-color:white;">
-        <p> Inline preview not supported in this browser. 
-        Please use the download button above to view the PDF.</p>
-    </iframe>
+            <p> Inline preview not supported in this browser. 
+            Please use the download button above to download the PDF.</p>
+        </iframe>
     """
     components.html(pdf_display, height=default_height)          
 
@@ -81,8 +81,8 @@ if user_prompt.strip():
             # Pass the prompt into the agent                
             result = agent.run(user_prompt)
             # Store response in session  
-            st.session_state["response_text"] = result.get("reply_text", "")
-            st.session_state["last_query"] = user_prompt  
+            #st.session_state["response_text"] = result.get("reply_text", "")
+            #st.session_state["last_query"] = user_prompt  
             # Show response
             if result.get("reply_text"):
                 st.success("Response received!")
@@ -90,24 +90,15 @@ if user_prompt.strip():
                 
             if "message" in result:
                 st.info(result["message"])
+                
             if "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
-                show_pdf(result["pdf_bytes"])                
+                show_pdf(result["pdf_bytes"])  
+                              
             if st.session_state["response_text"]:
-                st.info("Tip: You can save this response as a PDF. Either click 'Save as PDF' button in the sidebar or Type 'save as pdf' in the prompt box.")
+                st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
-            st.error(f"Agent error: {e}")
-
-#Sidebar Save as PDF button
-if st.session_state.get("response_text"):
-    if st.sidebar.button("Save Response as PDF"):
-        pdf_bytes = generate_pdf(
-            st.session_state.get("last_query", ""),
-            st.session_state["response_text"]
-        )
-        show_pdf(pdf_bytes)
-
-            
+            st.error(f"Agent error: {e}")           
 
 # --- Sidebar Signature ---   
 st.sidebar.markdown("---")
