@@ -91,8 +91,9 @@ if user_prompt.strip():
                 st.success("Response received!")
                 st.write(result["reply_text"])
                 
-            if "message" in result:
+            if "message" in result and result["message"] != result.get("reply_text"):
                 st.info(result["message"])
+
                 
             if "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
