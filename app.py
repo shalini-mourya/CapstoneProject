@@ -29,7 +29,7 @@ except Exception as e:
 # --- Memory + Tools + Agent ---
 memory = MemoryManager()
 pdf_tool = PDFTool()
-agent = Agent(model=gemini, memory_manager=MemoryManager())
+agent = Agent(model=model, memory_manager=MemoryManager())
 
 # --- Session State ---
 for key in ["response_text","last_query"]:
