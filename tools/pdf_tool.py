@@ -7,6 +7,12 @@ class PDFTool:
         # Define trigger keywords/phrases
         self.triggers = [
             "save as pdf",
+            "save response as pdf",  
+            "save the response as pdf",           
+            "save pdf",
+            "save this as pdf",
+            "save it as pdf",
+            "create pdf",
             "export pdf",
             "generate pdf",
             "make pdf",
@@ -29,7 +35,7 @@ class PDFTool:
         if not last_response:
             return {
                 "reply_text": "I can't save a PDF yet.",
-                "message": "No response available yet to save as PDF."
+                "message": "No existing response to save as PDF. Please ask a question first, then type 'save as pdf'."
             }
 
         pdf_bytes = generate_pdf(last_query,last_response)
