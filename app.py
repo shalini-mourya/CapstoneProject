@@ -46,6 +46,9 @@ st.markdown("Type your query and Gemini will respond instantly.")
 # --- Sidebar  ---        
 st.sidebar.image("assets/images/chattoprint_logo.png", width=100)
 
+# --- Prompt Input ---
+user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
+
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):   
            
@@ -75,23 +78,11 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     components.html(pdf_display, height=default_height)          
 
 
-# --- Prompt Input ---
-user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
-
 if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
         try:
-            # Pass the prompt into the agent                
-            #result = agent.run(user_prompt)
-            result = agent.process("Explain modular agent orchestration")
-            print(result["message"])   # Gemini’s response
-            result = agent.process("save as pdf")
-            print(result["message"])   # "PDF generated from the last response."
-
-            # Store response in session  
-            st.session_state["response_text"] = result.get("reply_text", "")
-            st.session_state["last_query"] = user_prompt  
-            # Show response
+            result = agent.run(user_prompt)
+            #show response            
             if result.get("reply_text"):
                 st.success("Response received!")
                 st.write(result["reply_text"])
@@ -102,8 +93,8 @@ if user_prompt.strip():
             if "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])  
-                              
-            if st.session_state["response_text"]:
+            
+            if result.get("reply_text"):
                 st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")           
