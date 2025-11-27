@@ -23,15 +23,7 @@ class Agent:
         # Simple routing example
         prompt_lower = prompt.lower()
         
-        # Always call → Gemini  first     
-        model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(prompt)
-        reply_text = response.text
-
-        # Save to memory
-        self.memory.set("response_text", reply_text)
-        self.memory.set("last_query", prompt)
-
+        
         result = {"reply_text": reply_text}
 
         # --- Then check tools ---
@@ -40,13 +32,27 @@ class Agent:
            if hasattr(tool, "can_handle") and tool.can_handle(prompt_lower):
                 tool_result = tool.handle(prompt_lower, self.memory)
                 # Ensure tool returns structured dict
-                if isinstance(tool_result, dict):
-                    result.update(tool_result)
+                if isinstance(result, dict):
+                    return {
+                        "reply_text": self.memory.get("response_text", ""),
+                        **result
+                    }
                 else:
-                    result["message"] = str(tool_result)
-                    
+                    return {
+                        "reply_text": self.memory.get("response_text", ""),
+                        "message": str(result)
+                    }
+  
+        # otherwise call → Gemini       
+        model = genai.GenerativeModel("gemini-2.5-flash")
+        response = model.generate_content(prompt)
+        reply_text = response.text
 
-        return result
+        # Save to memory
+        self.memory.set("response_text", reply_text)
+        self.memory.set("last_query", prompt)
+
+        return {"reply_text": reply_text}
 
 
     
