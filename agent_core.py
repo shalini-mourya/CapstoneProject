@@ -22,7 +22,7 @@ class Agent:
     def run(self, prompt: str) -> dict:
         # Simple routing example
         prompt_lower = prompt.lower()       
-        
+        reply_text = "" 
         # Route to tools
         for tool in self.tools:
            if hasattr(tool, "can_handle") and tool.can_handle(prompt_lower):
