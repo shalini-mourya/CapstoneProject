@@ -29,6 +29,12 @@ class Agent:
         """
         Main orchestration: generate response, update memory, route tools.
         """
+        
+        # Route prompt to tools if needed
+        for tool in self.tools.values():
+            if tool.can_handle(user_prompt):
+                return tool.handle(user_prompt, self.memory)
+            
         # Get response from Gemini
         response = self.model.generate_content(user_prompt)
         response_text = response.text
@@ -37,13 +43,14 @@ class Agent:
         # Update memory immediately
         self.memory.update(user_prompt, response_text)
 
-        # Route prompt to tools if needed
-        for tool in self.tools.values():
-            if tool.can_handle(user_prompt):
-                return tool.handle(user_prompt, self.memory)
+        
 
         # Default return if no tool triggered
-        return {"reply_text": response_text}
+        return {
+            "reply_text": response_text,
+            "message": response_text
+        }
+
   
     
     # def run(self, prompt: str) -> dict:

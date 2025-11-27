@@ -82,7 +82,11 @@ if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
         try:
             result = agent.run(user_prompt)
-            #show response            
+            
+            #  Store response in session  
+            st.session_state["response_text"] = result.get("reply_text", "")
+            st.session_state["last_query"] = user_prompt  
+            #  Show response
             if result.get("reply_text"):
                 st.success("Response received!")
                 st.write(result["reply_text"])
@@ -93,8 +97,8 @@ if user_prompt.strip():
             if "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])  
-            
-            if result.get("reply_text"):
+                              
+            if st.session_state["response_text"]:
                 st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")           
