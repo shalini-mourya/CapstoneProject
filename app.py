@@ -99,7 +99,7 @@ if user_prompt.strip():
             st.error(f"Agent error: {e}")
 
 #Sidebar Save as PDF button
-if st.session_state["response_text"]:
+if st.session_state.get("response_text"):
     if st.sidebar.button("Save Response as PDF"):
         pdf_bytes = generate_pdf(
             st.session_state.get("last_query", ""),
