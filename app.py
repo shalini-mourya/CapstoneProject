@@ -88,9 +88,9 @@ if user_prompt.strip():
             st.session_state["response_text"] = result.get("reply_text", "")
             st.session_state["last_query"] = user_prompt  
             # Show response
-            st.success("Response received!")
-            st.write(st.session_state["response_text"])
-           
+            if result.get("reply_text"):
+                st.success("Response received!")
+                st.write(result["reply_text"])
             if "message" in result:
                 st.info(result["message"])
             if "pdf_bytes" in result:

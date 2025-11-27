@@ -12,13 +12,13 @@ class PDFTool:
         ]
         return any(trigger in prompt for trigger in triggers)
 
-    def handle(self, prompt: str, memory) -> str:
+    def handle(self, prompt: str, memory) -> dict:
         # Get last response from memory
         last_response = memory.get("response_text")
         last_query = memory.get("last_query")
 
         if not last_response:
-            return "No response available yet to save as PDF."
+            return {"message": "No response available yet to save as PDF."}
 
         pdf_bytes = generate_pdf(last_query, last_response)
         # Return structured data instead of calling UI directly
