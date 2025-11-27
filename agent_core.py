@@ -6,7 +6,7 @@ class InMemoryStore:
     def __init__(self):
         self.store = {}
 
-     def set(self, key, value):
+    def set(self, key, value):
         self.store[key] = value
 
     def get(self, key, default=None):
