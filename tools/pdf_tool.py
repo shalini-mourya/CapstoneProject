@@ -21,11 +21,10 @@ class PDFTool:
         # Check if any trigger keyword is present
         return any(trigger in prompt_lower for trigger in self.triggers)
 
-
     def handle(self, prompt: str, memory_manager) -> dict:       
         
         # Get the last response text from memory
-        last_response = memory_manager.get("response_text")
+        last_response = memory_manager.get("reply_text")
        
         if not last_response:
             return {"message": "No response available yet to save as PDF."}

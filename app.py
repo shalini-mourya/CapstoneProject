@@ -82,10 +82,7 @@ if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
         try:
             result = agent.run(user_prompt)
-            
-            #  Store response in session  
-            #st.session_state["response_text"] = result.get("reply_text", "")
-            st.session_state["last_query"] = user_prompt  
+                        
             #  Show response
             if result.get("reply_text"):                
                 st.write(result["reply_text"])
