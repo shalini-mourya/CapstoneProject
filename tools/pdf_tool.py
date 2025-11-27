@@ -1,5 +1,4 @@
 # tools/pdf_tool.py 
-import re
 from utils.pdf_utils import generate_pdf
 
 class PDFTool:
