@@ -95,13 +95,13 @@ if user_prompt.strip():
            
             # Show guidance only if a response exists                
             if st.session_state["response_text"]:
-                st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
+                st.info("Tip: You can save this response as a PDF. Either click 'Save as PDF' button in the sidebar or Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")
 
 #Sidebar Save as PDF button
 if st.session_state["response_text"]:
-    if st.sidebar.button("Save Response as PDF"):
+    if st.sidebar.button("Save as PDF"):
         pdf_bytes = generate_pdf(
             st.session_state.get("last_query", ""),
             st.session_state["response_text"]
