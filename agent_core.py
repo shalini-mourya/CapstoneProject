@@ -20,7 +20,7 @@ class Agent:
 
     def __init__(self, model, memory_manager):
         self.model = model 
-        self.memory = memory
+        self.memory = _manager
         self.tools = {
             "pdf": PDFTool()          
         }
@@ -30,13 +30,15 @@ class Agent:
         Main orchestration: generate response, update memory, route tools.
         """
         # 1. Get response from Gemini
-        response_text = self.model.generate(user_prompt)
+        response = self.model.generate_content(user_prompt)
+        response_text = response.text
+
 
         # 2. Update memory immediately
         self.memory.update(user_prompt, response_text)
 
         # 3. Route prompt to tools if needed
-        for name, tool in self.tools.items():
+        for tool in self.tools.values():
             if tool.can_handle(user_prompt):
                 return tool.handle(user_prompt, self.memory)
 
@@ -49,10 +51,10 @@ class Agent:
     def run(self, prompt: str) -> dict:
         # Simple routing example
         prompt_lower = prompt.lower()       
-        reply_text = "" 
+        #reply_text = "" 
         # Route to tools
-        for tool in self.tools:
-           if hasattr(tool, "can_handle") and tool.can_handle(prompt_lower):
+        for tool in self.tools.values():
+           if tool.can_handle(prompt_lower):
                 result = tool.handle(prompt_lower, self.memory)
 
                 # Ensure tool returns structured dict
@@ -68,13 +70,12 @@ class Agent:
                     }
         
         # otherwise call → Gemini       
-        model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(prompt)
+        #model = genai.GenerativeModel("gemini-2.5-flash")
+        response = self.model.generate_content(prompt)
         reply_text = response.text
 
         # Save to memory
-        self.memory.set("response_text", reply_text)
-        self.memory.set("last_query", prompt)
+        self.memory.update(prompt, reply_text)
 
 
         return {"reply_text": reply_text}    

@@ -26,6 +26,9 @@ except Exception as e:
     st.error(f"Error loading API key: {e}")
     st.stop()
     
+# Create the model instance
+model = genai.GenerativeModel("gemini-2.5-flash")
+    
 # --- Memory + Tools + Agent ---
 memory = MemoryManager()
 pdf_tool = PDFTool()
