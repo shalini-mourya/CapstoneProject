@@ -101,7 +101,7 @@ if user_prompt.strip():
             if result.get("reply_text") and not pdf_was_created:                                
                 st.write(result["reply_text"])
                 
-            if "message" in result and not pdf_was_created:
+            if "message" in result and result["message"] != result.get("reply_text"):
                 st.info(result["message"])
                                 
             if pdf_was_created:
