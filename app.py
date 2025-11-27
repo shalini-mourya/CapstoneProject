@@ -43,9 +43,6 @@ st.markdown("Type your query and Gemini will respond instantly.")
 # --- Sidebar  ---        
 st.sidebar.image("assets/images/chattoprint_logo.png", width=100)
 
-preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
-fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
-
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):          
     if isinstance(pdf_bytes,bytearray):
@@ -59,19 +56,19 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     )  
 
     # Inline preview
-    if preview_option:               
-        base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
-        width_attr = "100%" if fit_to_container else f"{default_width}px"
-        pdf_display = f"""
-        <iframe src="data:application/pdf;base64,{base64_pdf}" 
-                width="{width_attr}" 
-                height="{default_height}" 
-                style="border:none; background-color:white;">
-            <p> Inline preview not supported in this browser. 
-            Please use the download button above to view the PDF.</p>
-        </iframe>
-        """
-        components.html(pdf_display, height=default_height)          
+                   
+    base64_pdf = base64.b64encode(pdf_bytes).decode("utf-8")
+    width_attr = "100%" if fit_to_container else f"{default_width}px"
+    pdf_display = f"""
+    <iframe src="data:application/pdf;base64,{base64_pdf}" 
+            width="{width_attr}" 
+            height="{default_height}" 
+            style="border:none; background-color:white;">
+        <p> Inline preview not supported in this browser. 
+        Please use the download button above to view the PDF.</p>
+    </iframe>
+    """
+    components.html(pdf_display, height=default_height)          
 
 
 # --- Prompt Input ---
