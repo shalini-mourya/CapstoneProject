@@ -89,45 +89,30 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
 if user_prompt.strip():
-    # Define trigger phrases (lowercase for consistency)
-    triggers = [
-        "generate pdf",
-        "save as pdf",
-        "save pdf",
-        "save response as pdf",
-        "save this as pdf",      
-        "make pdf",
-        "make response as pdf"
-        "print pdf",
-        "print this",
-        "pdf please",
-        "export pdf"
-    ]
-    # Normalize prompt to lowercase
-    prompt_lower = user_prompt.lower()
+    with st.spinner("Agent is processing ..."):
+        try:
+            # Pass the prompt into the agent                
+            reply_text = agent.run(user_prompt)
+            # Store response in session  
+            st.session_state["response_text"] = reply_text
+            st.session_state["last_query"] = user_prompt  
+            # Show response
+            st.success("Response received!")
+            st.write(reply_text)
+            # Show guidance only if a response exists                
+            if st.session_state["response_text"]:
+                st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
+        except Exception as e:
+            st.error(f"Agent error: {e}")
+#Sidebar Save as PDF button
+if st.session_state["response_text"]:
+    if st.sidebar.button("Save Response as PDF"):
+        pdf_bytes = generate_pdf(
+            st.session_state.get("last_query", ""),
+            st.session_state["response_text"]
+        )
+        show_pdf(pdf_bytes)
 
-    if any(trigger in prompt_lower for trigger in triggers):
-        # Skip Gemini, just generate PDF from last response
-        if st.session_state["response_text"]:
-            pdf_bytes = generate_pdf(st.session_state.get("last_query", ""),st.session_state["response_text"])            
-            show_pdf(pdf_bytes)
-        else:
-            st.warning("No response available yet to save as PDF.")
-    else:
-        # Normal flow → ask Gemini    
-        with st.spinner("Gemini is thinking..."):
-            try:
-                response = model.generate_content(user_prompt)
-                reply_text = response.text
-                st.session_state["response_text"] = reply_text
-                st.session_state["last_query"] = user_prompt  # store the actual query
-                st.success("Response received!")
-                st.write(reply_text)
-                # Show guidance only if a response exists                
-                if st.session_state["response_text"]:
-                    st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
-            except Exception as e:
-                st.error(f"Gemini API error: {e}")
             
 
 # --- Sidebar Signature ---   
