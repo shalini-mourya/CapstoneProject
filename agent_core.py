@@ -41,9 +41,7 @@ class Agent:
 
 
         # Update memory immediately
-        self.memory.update(user_prompt, response_text)
-
-        
+        self.memory.update(user_prompt, response_text)        
 
         # Default return if no tool triggered
         return {

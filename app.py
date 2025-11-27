@@ -4,7 +4,7 @@ import base64, re
 import streamlit.components.v1 as components
 from utils.pdf_utils import generate_pdf
 from agent_core import Agent, MemoryManager
-from tools.pdf_tool import PDFTool
+#from tools.pdf_tool import PDFTool
 
 # --- Background Image ---
 with open("assets/images/background.jpg", "rb") as f:
@@ -31,7 +31,7 @@ model = genai.GenerativeModel("gemini-2.5-flash")
     
 # --- Memory + Tools + Agent ---
 memory = MemoryManager()
-pdf_tool = PDFTool()
+#pdf_tool = PDFTool()
 agent = Agent(model=model, memory_manager=MemoryManager())
 
 # --- Session State ---
@@ -46,8 +46,6 @@ st.markdown("Type your query and Gemini will respond instantly.")
 # --- Sidebar  ---        
 st.sidebar.image("assets/images/chattoprint_logo.png", width=100)
 
-# --- Prompt Input ---
-user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):   
@@ -77,6 +75,8 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
     """
     components.html(pdf_display, height=default_height)          
 
+# --- Prompt Input ---
+user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
 if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
@@ -84,8 +84,8 @@ if user_prompt.strip():
             result = agent.run(user_prompt)
             
             #  Store response in session  
-            st.session_state["response_text"] = result.get("reply_text", "")
-            st.session_state["last_query"] = user_prompt  
+            #st.session_state["response_text"] = result.get("reply_text", "")
+            #st.session_state["last_query"] = user_prompt  
             #  Show response
             if result.get("reply_text"):
                 st.success("Response received!")
@@ -98,7 +98,7 @@ if user_prompt.strip():
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])  
                               
-            if st.session_state["response_text"]:
+            if result.get("reply_text"):
                 st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")           
