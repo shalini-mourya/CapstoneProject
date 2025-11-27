@@ -22,26 +22,22 @@ class PDFTool:
         return any(trigger in prompt_lower for trigger in self.triggers)
 
 
-    def handle(self, prompt: str, memory) -> dict:
+    def handle(self, prompt: str, memory_manager) -> dict:       
         
-        
-        if memory is None:
-            return {"message": "⚠️ Memory object is None. Cannot access last response."}
-
-
-        # Get last response from memory
-        last_response = memory.get("response_text")
-        last_query = memory.get("last_query")
+        # Get the last response text from memory
+        last_response = memory_manager.get("response_text")
        
-        if not last_response or last_response.strip() == "":
+        if not last_response:
             return {"message": "No response available yet to save as PDF."}
 
-        pdf_bytes = generate_pdf(last_query or "User Query", last_response)
+        pdf_bytes = generate_pdf(last_response)
         
               # Return structured data instead of calling UI directly
         return {
+            "reply_text": last_response,       # show the last Gemini response
             "message": "PDF generated from the last response.",
-            "pdf_bytes": pdf_bytes
+            "pdf_bytes": pdf_bytes             # for download/preview
         }
+
     
    

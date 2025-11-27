@@ -1,4 +1,4 @@
-import google.generativeai as genai
+#import google.generativeai as genai
 from tools.pdf_tool import PDFTool
 
 class MemoryManager:
@@ -21,15 +21,12 @@ class Agent:
     def __init__(self, model, memory_manager):
         self.model = model 
         self.memory = memory_manager
-        self.tools = {
-            "pdf": PDFTool()          
-        }
+        self.tools = {"pdf": PDFTool()}
     
     def run(self, user_prompt: str) -> dict:
         """
         Main orchestration: generate response, update memory, route tools.
-        """
-        
+        """        
         # Route prompt to tools if needed
         for tool in self.tools.values():
             if tool.can_handle(user_prompt):
