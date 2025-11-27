@@ -1,7 +1,4 @@
-# Agent, Planner, Memory classes -import and register the tool
-from tools.pdf_tool import PDFTool
-from tools.storage_tool import StorageTool
-from dataclasses import dataclass
+import google.generativeai as genai
 
 class InMemoryStore:
     def __init__(self):
@@ -21,51 +18,34 @@ class InMemoryStore:
 
     def list_artifacts(self, user_id: str, limit: int = 50):
         return self.artifacts.get(user_id, [])[-limit:]
-@dataclass
-class PlanStep:
-    tool: str
-    args: dict
-
-@dataclass
-class Plan:
-    steps: list
-
-class Planner:
-    def __init__(self, tools):
-        self.tools = tools
-
-    def make_plan(self, goal, context):
-        return Plan(steps=[
-            PlanStep(tool="generate_pdf", args={
-                "prompt": context["prompt"],
-                "response": context["response"],
-                "prefs": context.get("prefs")
-            })
-        ])
 
 class Agent:
+    """Agent that routes prompts to tools or Gemini by default."""
+
     def __init__(self, memory, tools):
         self.memory = memory
-        self.registry = {t.name: t for t in tools}
-        self.planner = Planner(self.registry)
-
-    def handle(self, user_id: str, goal: str, context: dict) -> dict:
-        ctx = {"user_id": user_id, "memory": self.memory, **context}
-        plan = self.planner.make_plan(goal, ctx)
-        last_result = None
-        for step in plan.steps:            
-            tool = self.registry[step.tool]
-            args = step.args.copy()            
+        self.tools = tools or []        
+    
+    def run(self, prompt: str) -> str:
+        # Simple routing example
+        prompt_lower = prompt.lower()
         
-       
-            if last_result and "bytes" in last_result and "pdf_bytes" in tool.run.__code__.co_varnames:
-                args["pdf_bytes"] = last_result["bytes"]
+        # Route to tools
+        for tool in self.tools:
+            # Check tools
+            if tool.can_handle(prompt_lower):
+                return tool.handle(prompt_lower, self.memory)
 
-            result = tool.run(**args)
-            last_result = result
+        # Default → Gemini        
+        model = genai.GenerativeModel("gemini-2.5-flash")
+        response = model.generate_content(prompt)
+        reply_text = response.text
 
-            # Save artifact metadata
-            if result.get("type") in ("pdf", "file"):
-                self.memory.add_artifact(user_id, {"goal": goal, **result["meta"]})
+        # Save to memory
+        self.memory.set("response_text", reply_text)
+        self.memory.set("last_query", prompt)
 
-        return last_result or {"status": "ok"}
+        return reply_text
+
+
+    

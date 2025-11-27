@@ -1,23 +1,19 @@
 # tools/storage_tool.py
 import os
-from dataclasses import dataclass
 from typing import Dict, Any
 
-@dataclass
 class StorageTool:
-    name: str = "store_pdf"
+    def __init__(self):
+        self.storage = []
 
-    def run(self, pdf_bytes: bytes, filename: str, dest: str = "local") -> Dict[str, Any]:
-        """
-        Save PDF bytes to a file. Extend later for cloud storage.
-        """
-        os.makedirs("outputs", exist_ok=True)
-        path = os.path.join("outputs", filename)
-        with open(path, "wb") as f:
-            f.write(pdf_bytes)
+    def can_handle(self, prompt: str) -> bool:
+        triggers = ["store this", "save chat", "remember this"]
+        return any(trigger in prompt for trigger in triggers)
 
-        return {
-            "type": "file",
-            "path": path,
-            "meta": {"dest": dest}
-        }
+    def handle(self, prompt: str, memory) -> str:
+        last_response = memory.get("response_text")
+        if last_response:
+            self.storage.append(last_response)
+            return "Response stored successfully."
+        else:
+            return "Nothing to store yet."

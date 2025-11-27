@@ -1,26 +1,33 @@
 # tools/pdf_tool.py # PDFTool wrapper around generate_pdf()
-from dataclasses import dataclass
 from utils.pdf_utils import generate_pdf
-from fpdf import FPDF
+from app_ui import show_pdf   # assuming you have show_pdf in a helper
 
-@dataclass
+
 class PDFTool:
-    name: str = "generate_pdf"
+    
+    def __init__(self):
+        pass
 
-    def run(self, prompt: str, response: str, prefs=None, pdf_bytes=None):
-        
-        """
-        Agent-friendly wrapper around generate_pdf.
-        Returns structured dict with PDF bytes + metadata.
-        """
-        pdf_bytes = generate_pdf(prompt, response, prefs)
-            
-        return {
-            "type": "pdf",
-            "bytes": pdf_bytes,   # raw binary data
-            "meta": {
-                "filename": "output.pdf",
-                "pages": 1,
-                "prefs": prefs
-            }
-        }
+    def can_handle(self, prompt: str) -> bool:
+        triggers = [
+            "generate pdf", "save as pdf", "save pdf",
+            "save response as pdf", "save this as pdf",
+            "make pdf", "make response as pdf",
+            "print pdf", "print this", "pdf please", "export pdf"
+        ]
+        return any(trigger in prompt for trigger in triggers)
+
+    def handle(self, prompt: str, memory) -> str:
+        # Get last response from memory
+        last_response = memory.get("response_text")
+        last_query = memory.get("last_query")
+
+        if not last_response:
+            return "No response available yet to save as PDF."
+
+        pdf_bytes = generate_pdf(last_query, last_response)
+        # You can call show_pdf(pdf_bytes) here if you want UI output
+        show_pdf(pdf_bytes)
+        return "PDF generated from the last response."
+    
+   

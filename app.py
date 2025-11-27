@@ -7,15 +7,6 @@ from agent_core import Agent, InMemoryStore
 from tools.pdf_tool import PDFTool
 from tools.storage_tool import StorageTool
 
-# Create memory + tools
-memory = InMemoryStore()
-pdf_tool = PDFTool()
-storage_tool = StorageTool()
-
-# Create the agent object
-agent = Agent(memory=memory, tools=[pdf_tool, storage_tool])
-
-
 # --- Background Image ---
 with open("assets/images/background.jpg", "rb") as f:
     encoded = base64.b64encode(f.read()).decode()
@@ -35,9 +26,12 @@ try:
 except Exception as e:
     st.error(f"Error loading API key: {e}")
     st.stop()
-
-# --- Initialize Gemini Model ---
-model = genai.GenerativeModel("gemini-2.5-flash")
+    
+# --- Memory + Tools + Agent ---
+memory = InMemoryStore()
+pdf_tool = PDFTool()
+storage_tool = StorageTool()
+agent = Agent(memory=memory, tools=[pdf_tool, storage_tool])
 
 # --- Session State ---
 if "response_text" not in st.session_state:
@@ -49,7 +43,6 @@ st.markdown("Type your query and Gemini will respond instantly.")
 
 # --- Sidebar  ---        
 st.sidebar.image("assets/images/chattoprint_logo.png", width=170)
-
 
 # --- Show PDF ---
 def show_pdf(pdf_bytes, default_width=800, default_height=600):   
@@ -99,11 +92,13 @@ if user_prompt.strip():
             # Show response
             st.success("Response received!")
             st.write(reply_text)
+           
             # Show guidance only if a response exists                
             if st.session_state["response_text"]:
                 st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")
+
 #Sidebar Save as PDF button
 if st.session_state["response_text"]:
     if st.sidebar.button("Save Response as PDF"):
