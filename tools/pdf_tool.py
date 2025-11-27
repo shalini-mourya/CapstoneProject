@@ -1,4 +1,5 @@
-# tools/pdf_tool.py # PDFTool wrapper around generate_pdf()
+# tools/pdf_tool.py 
+import re
 from utils.pdf_utils import generate_pdf
 
 class PDFTool:
@@ -21,8 +22,10 @@ class PDFTool:
             return "No response available yet to save as PDF."
 
         pdf_bytes = generate_pdf(last_query, last_response)
-        # You can call show_pdf(pdf_bytes) here if you want UI output
-        show_pdf(pdf_bytes)
-        return "PDF generated from the last response."
+        # Return structured data instead of calling UI directly
+        return {
+            "message": "PDF generated from the last response.",
+            "pdf_bytes": pdf_bytes
+        }
     
    

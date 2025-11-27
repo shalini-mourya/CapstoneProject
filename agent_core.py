@@ -19,15 +19,25 @@ class Agent:
         self.memory = memory
         self.tools = tools or []        
     
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str) -> dict:
         # Simple routing example
         prompt_lower = prompt.lower()
         
         # Route to tools
         for tool in self.tools:
            if hasattr(tool, "can_handle") and tool.can_handle(prompt_lower):
-                return tool.handle(prompt_lower, self.memory)
-
+                result = tool.handle(prompt_lower, self.memory)
+                # Ensure tool returns structured dict
+                if isinstance(result, dict):
+                    return {
+                        "reply_text": self.memory.get("response_text", ""),
+                        **result
+                    }
+                else:
+                    return {
+                        "reply_text": self.memory.get("response_text", ""),
+                        "message": str(result)
+                    }
 
         # Default → Gemini        
         model = genai.GenerativeModel("gemini-2.5-flash")
@@ -38,7 +48,10 @@ class Agent:
         self.memory.set("response_text", reply_text)
         self.memory.set("last_query", prompt)
 
-        return reply_text
+        return {
+            "reply_text": reply_text
+        }
+
 
 
     

@@ -5,7 +5,6 @@ import streamlit.components.v1 as components
 from utils.pdf_utils import generate_pdf
 from agent_core import Agent, InMemoryStore
 from tools.pdf_tool import PDFTool
-from tools.storage_tool import StorageTool
 
 # --- Background Image ---
 with open("assets/images/background.jpg", "rb") as f:
@@ -30,12 +29,12 @@ except Exception as e:
 # --- Memory + Tools + Agent ---
 memory = InMemoryStore()
 pdf_tool = PDFTool()
-storage_tool = StorageTool()
-agent = Agent(memory=memory, tools=[pdf_tool, storage_tool])
+agent = Agent(memory=memory, tools=[pdf_tool])
 
 # --- Session State ---
-if "response_text" not in st.session_state:
-    st.session_state["response_text"] = ""
+for key in ["response_text","last_query"]:
+    if key not in st.session_state:
+        st.session_state["response_text"] = ""
 
 # --- Streamlit UI ---
 st.title("ChatToPrint - converse and capture")
@@ -74,8 +73,7 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
             Please use the download button above to view the PDF.</p>
         </iframe>
         """
-        components.html(pdf_display, height=default_height)  
-        
+        components.html(pdf_display, height=default_height)          
 
 
 # --- Prompt Input ---
@@ -85,16 +83,20 @@ if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
         try:
             # Pass the prompt into the agent                
-            reply_text = agent.run(user_prompt)
+            result = agent.run(user_prompt)
             # Store response in session  
-            st.session_state["response_text"] = reply_text
+            st.session_state["response_text"] = result.get("reply_text", "")
             st.session_state["last_query"] = user_prompt  
             # Show response
             st.success("Response received!")
-            st.write(reply_text)
+            st.write(st.session_state["response_text"])
            
-            # Show guidance only if a response exists                
-            if st.session_state["response_text"]:
+            if "message" in result:
+                st.info(result["message"])
+            if "pdf_bytes" in result:
+                st.success("PDF has been saved! Click below to download:")
+                show_pdf(result["pdf_bytes"])
+            elif st.session_state["response_text"]:
                 st.info("Tip: You can save this response as a PDF. Either click 'Save as PDF' button in the sidebar or Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")
