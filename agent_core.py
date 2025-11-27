@@ -27,7 +27,6 @@ class Agent:
         for tool in self.tools:
            if hasattr(tool, "can_handle") and tool.can_handle(prompt_lower):
                 result = tool.handle(prompt_lower, self.memory)
-                self.memory.set("last_query", prompt)
 
                 # Ensure tool returns structured dict
                 if isinstance(result, dict):
@@ -48,6 +47,7 @@ class Agent:
 
         # Save to memory
         self.memory.set("response_text", reply_text)
-       
+        self.memory.set("last_query", prompt)
 
-        return {"reply_text": reply_text}    
+
+        return {"reply_text": self.memory.get("response_text", ""), **result}    
