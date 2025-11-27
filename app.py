@@ -98,7 +98,8 @@ if user_prompt.strip():
                 pdf_status_placeholder.success("PDF has been generated! Click below to download/preview:")
                      
             #  Show response
-            if result.get("reply_text") and not pdf_was_created:                                
+            reply_text = result.get("reply_text", "").strip()
+            if reply_text and not pdf_was_created:                                
                 st.write(result["reply_text"])
                 
             if "message" in result and result["message"] != result.get("reply_text"):
@@ -106,7 +107,7 @@ if user_prompt.strip():
                                 
             if pdf_was_created:
                 show_pdf(result["pdf_bytes"])                                
-            elif result.get("reply_text") and not pdf_was_created:
+            elif reply_text and not pdf_was_created:
                 st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")           
