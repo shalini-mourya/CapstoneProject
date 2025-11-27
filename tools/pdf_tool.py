@@ -1,13 +1,8 @@
 # tools/pdf_tool.py # PDFTool wrapper around generate_pdf()
 from utils.pdf_utils import generate_pdf
-from app_ui import show_pdf   # assuming you have show_pdf in a helper
-
 
 class PDFTool:
     
-    def __init__(self):
-        pass
-
     def can_handle(self, prompt: str) -> bool:
         triggers = [
             "generate pdf", "save as pdf", "save pdf",
