@@ -5,15 +5,21 @@ import re
 class PDFTool:
     
     def can_handle(self, prompt: str) -> bool:
-        pattern = r"(save|generate|make|print|export).*pdf"
-        return re.search(pattern, prompt, re.IGNORECASE) is not None
+        # Define trigger patterns
+        triggers = [
+            r"(save|generate|make|print|export).*pdf",
+            r"pdf.*(save|generate|make|print|export)",
+            r"(download).*pdf",
+            r"(convert).*pdf"
+        ]
+        # Check all triggers
+        return any(re.search(pattern, prompt, re.IGNORECASE) for pattern in triggers)
 
     def handle(self, prompt: str, memory) -> dict:
         # Get last response from memory
         last_response = memory.get("response_text")
         last_query = memory.get("last_query")
-        print(f"[PDFTool] last_query={last_query}, last_response={last_response[:50]}...")
-
+       
         if not last_response or last_response.strip() == "":
             return {"message": "No response available yet to save as PDF."}
 
