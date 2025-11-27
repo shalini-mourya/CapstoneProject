@@ -81,8 +81,8 @@ if user_prompt.strip():
             # Pass the prompt into the agent                
             result = agent.run(user_prompt)
             # Store response in session  
-            #st.session_state["response_text"] = result.get("reply_text", "")
-            #st.session_state["last_query"] = user_prompt  
+            st.session_state["response_text"] = result.get("reply_text", "")
+            st.session_state["last_query"] = user_prompt  
             # Show response
             if result.get("reply_text"):
                 st.success("Response received!")
