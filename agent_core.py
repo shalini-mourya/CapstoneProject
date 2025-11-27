@@ -30,7 +30,7 @@ class Agent:
         # Route to tools
         for tool in self.tools:
            if hasattr(tool, "can_handle") and tool.can_handle(prompt_lower):
-                tool_result = tool.handle(prompt_lower, self.memory)
+                result = tool.handle(prompt_lower, self.memory)
                 # Ensure tool returns structured dict
                 if isinstance(result, dict):
                     return {
