@@ -79,10 +79,19 @@ def show_pdf(pdf_bytes, default_width=800, default_height=600):
 # --- Prompt Input ---
 user_prompt = st.text_input("Enter your query for Gemini:", key="prompt")
 
+# --- Placeholder for PDF Status Message ---
+pdf_status_placeholder = st.empty()
+
 if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
         try:
             result = agent.run(user_prompt)
+            # --- Clear placeholder first
+            pdf_status_placeholder.empty()    
+            
+            # --- Check if PDF was created, and display message in the placeholder ---
+            if "pdf_bytes" in result:
+                pdf_status_placeholder.success("PDF has been generated! Click below to download/preview file:")        
                         
             #  Show response
             if result.get("reply_text"):                                
@@ -92,7 +101,6 @@ if user_prompt.strip():
                 st.info(result["message"])
                                 
             if "pdf_bytes" in result:
-                st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])  
                               
             if result.get("reply_text") and "pdf_bytes" not in result:
