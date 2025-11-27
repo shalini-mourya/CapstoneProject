@@ -43,13 +43,11 @@ st.markdown("Type your query and Gemini will respond instantly.")
 # --- Sidebar  ---        
 st.sidebar.image("assets/images/chattoprint_logo.png", width=100)
 
-# --- Show PDF ---
-def show_pdf(pdf_bytes, default_width=800, default_height=600):   
+preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
+fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
 
-    # Sidebar controls
-    preview_option = st.sidebar.checkbox("Show inline PDF preview", value=False)
-    fit_to_container = st.sidebar.checkbox("Fit preview to container width", value=False)     
-    
+# --- Show PDF ---
+def show_pdf(pdf_bytes, default_width=800, default_height=600):          
     if isinstance(pdf_bytes,bytearray):
         pdf_bytes=bytes(pdf_bytes)
         
@@ -94,7 +92,7 @@ if user_prompt.strip():
                 
             if "message" in result:
                 st.info(result["message"])
-            elif "pdf_bytes" in result:
+            if "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])                
             if st.session_state["response_text"]:
