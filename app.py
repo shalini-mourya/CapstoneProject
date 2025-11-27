@@ -82,9 +82,7 @@ if user_prompt.strip():
         try:
             # Pass the prompt into the agent                
             result = agent.run(user_prompt)
-            # Store response in session  
-            st.session_state["response_text"] = result.get("reply_text", "")
-            st.session_state["last_query"] = user_prompt  
+           
             # Show response
             if result.get("reply_text"):
                 st.success("Response received!")
@@ -92,9 +90,11 @@ if user_prompt.strip():
                 
             if "message" in result:
                 st.info(result["message"])
+                
             if "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
-                show_pdf(result["pdf_bytes"])                
+                show_pdf(result["pdf_bytes"])     
+                           
             if st.session_state["response_text"]:
                 st.info("Tip: You can save this response as a PDF. Either click 'Save as PDF' button in the sidebar or Type 'save as pdf' in the prompt box.")
         except Exception as e:

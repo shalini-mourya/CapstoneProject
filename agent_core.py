@@ -38,7 +38,7 @@ class Agent:
                         "reply_text": self.memory.get("response_text", ""),
                         "message": str(result)
                     }
-  
+        
         # otherwise call → Gemini       
         model = genai.GenerativeModel("gemini-2.5-flash")
         response = model.generate_content(prompt)
