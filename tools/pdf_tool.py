@@ -8,7 +8,8 @@ class PDFTool:
         self.triggers = [
             "save as pdf",
             "save response as pdf",  
-            "save the response as pdf",           
+            "save the response as pdf",  
+            "save this response as pdf",        
             "save pdf",
             "save this as pdf",
             "save it as pdf",
@@ -46,10 +47,10 @@ class PDFTool:
                 "message": f"Error generating PDF: {e}"
             }
         
-              # Return structured data instead of calling UI directly
+              # Return structured data for UI
         return {
             "reply_text": last_response,       # show the last Gemini response
-            "message": "Document saved as PDF. Use the button to download or preview.",
+            "message": "",
             "pdf_bytes": pdf_bytes             # for download/preview
         }
 
