@@ -86,8 +86,7 @@ if user_prompt.strip():
             result = agent.run(user_prompt)
                         
             #  Show response
-            if result.get("reply_text"):  
-                st.subheader("Gemini Response")              
+            if result.get("reply_text"):                                
                 st.write(result["reply_text"])
                 
             if "message" in result and result["message"] != result.get("reply_text"):

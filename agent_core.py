@@ -49,38 +49,4 @@ class Agent:
         return {
             "reply_text": response_text,
             "message": response_text
-        }
-
-  
-    
-    # def run(self, prompt: str) -> dict:
-    #     # Simple routing example
-    #     prompt_lower = prompt.lower()       
-    #     #reply_text = "" 
-    #     # Route to tools
-    #     for tool in self.tools.values():
-    #        if tool.can_handle(prompt_lower):
-    #             result = tool.handle(prompt_lower, self.memory)
-
-    #             # Ensure tool returns structured dict
-    #             if isinstance(result, dict):
-    #                 return {
-    #                     "reply_text": self.memory.get("response_text", ""),
-    #                     **result
-    #                 }
-    #             else:
-    #                 return {
-    #                     "reply_text": self.memory.get("response_text", ""),
-    #                     "message": str(result)
-    #                 }
-        
-    #     # otherwise call → Gemini       
-    #     #model = genai.GenerativeModel("gemini-2.5-flash")
-    #     response = self.model.generate_content(prompt)
-    #     reply_text = response.text
-
-    #     # Save to memory
-    #     self.memory.update(prompt, reply_text)
-
-
-    #     return {"reply_text": reply_text}    
+        }  
