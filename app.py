@@ -86,24 +86,27 @@ if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
         try:
             result = agent.run(user_prompt)
+            
+            # --- Check if the PDF tool was triggered ---
+            pdf_was_created = "pdf_bytes" in result
+            
             # --- Clear placeholder first
             pdf_status_placeholder.empty()    
             
-            # --- Check if PDF was created, and display message in the placeholder ---
-            if "pdf_bytes" in result:
-                pdf_status_placeholder.success("PDF has been generated! Click below to download/preview file:")        
-                        
+            # --- Handle PDF Creation and Status Message (Always placed above input) ---
+            if pdf_was_created:
+                pdf_status_placeholder.success("PDF has been generated! Click below to download/preview:")
+                     
             #  Show response
-            if result.get("reply_text"):                                
+            if result.get("reply_text") and not pdf_was_created:                                
                 st.write(result["reply_text"])
                 
-            if "message" in result and result["message"] != result.get("reply_text"):
+            if "message" in result and not pdf_was_created:
                 st.info(result["message"])
                                 
-            if "pdf_bytes" in result:
-                show_pdf(result["pdf_bytes"])  
-                              
-            if result.get("reply_text") and "pdf_bytes" not in result:
+            if pdf_was_created:
+                show_pdf(result["pdf_bytes"])                                
+            elif result.get("reply_text") and not pdf_was_created:
                 st.info("Tip: You can save this response as a PDF. Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")           
