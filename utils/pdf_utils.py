@@ -2,7 +2,7 @@
 from fpdf import FPDF
 import os, re
 # --- PDF Generation ---
-def generate_pdf(prompt, response, prefs=None):
+def generate_pdf(prompt:str, response:str)->bytes:
     pdf = FPDF()
     pdf.add_page()
 
