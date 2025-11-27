@@ -6,17 +6,19 @@ class PDFTool:
     
     def can_handle(self, prompt: str) -> bool:
         pattern = r"(save|generate|make|print|export).*pdf"
-        return re.search(pattern, prompt) is not None
+        return re.search(pattern, prompt, re.IGNORECASE) is not None
 
     def handle(self, prompt: str, memory) -> dict:
         # Get last response from memory
         last_response = memory.get("response_text")
         last_query = memory.get("last_query")
 
-        if not last_response:
+        if not last_response or last_response.strip() == "":
             return {"message": "No response available yet to save as PDF."}
 
-        pdf_bytes = generate_pdf(last_query, last_response)
+        pdf_bytes = generate_pdf(last_query or "User Query", last_response)
+        
+        print(f"[PDFTool] last_query={last_query}, last_response={last_response[:50]}...")
         # Return structured data instead of calling UI directly
         return {
             "message": "PDF generated from the last response.",
