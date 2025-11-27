@@ -20,7 +20,7 @@ class Agent:
 
     def __init__(self, model, memory_manager):
         self.model = model 
-        self.memory = _manager
+        self.memory = memory_manager
         self.tools = {
             "pdf": PDFTool()          
         }
