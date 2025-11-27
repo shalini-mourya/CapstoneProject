@@ -84,17 +84,15 @@ if user_prompt.strip():
             result = agent.run(user_prompt)
             
             #  Store response in session  
-            st.session_state["response_text"] = result.get("reply_text", "")
-            #st.session_state["last_query"] = user_prompt  
+            #st.session_state["response_text"] = result.get("reply_text", "")
+            st.session_state["last_query"] = user_prompt  
             #  Show response
-            if result.get("reply_text"):
-                st.success("Response received!")
+            if result.get("reply_text"):                
                 st.write(result["reply_text"])
                 
             if "message" in result and result["message"] != result.get("reply_text"):
                 st.info(result["message"])
-
-                
+                                
             if "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])  
