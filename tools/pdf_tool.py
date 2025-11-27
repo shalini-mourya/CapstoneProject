@@ -18,17 +18,14 @@ class PDFTool:
 
     def can_handle(self, prompt: str) -> bool:
         prompt_lower = prompt.lower()
+        print(f"[DEBUG] prompt_lower = {prompt_lower}")
         # Check if any trigger keyword is present
         return any(trigger in prompt_lower for trigger in self.triggers)
 
 
     def handle(self, prompt: str, memory) -> dict:
         
-        for trigger in self.triggers:
-            if trigger in prompt_lower:
-                print(f"[PDFTool] Trigger matched: {trigger}")
-                return True
-
+        
         if memory is None:
             return {"message": "⚠️ Memory object is None. Cannot access last response."}
 
