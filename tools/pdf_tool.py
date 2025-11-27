@@ -25,7 +25,7 @@ class PDFTool:
         
         # Get the last response text from memory
         last_response = memory_manager.get("response_text")
-       
+        last_query = memory_manager.get("last_query")
         if not last_response:
             return {
                 "reply_text": "I can't save a PDF yet.",
