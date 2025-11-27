@@ -2,12 +2,12 @@
 from fpdf import FPDF
 import os, re
 # --- PDF Generation ---
-def generate_pdf(prompt:str, response:str, prefs=None)->bytes:
+def generate_pdf(prompt:str, response:str)->bytes:
     pdf = FPDF()
     pdf.add_page()
 
     # Fonts (TTF supported in fpdf2)
-    fonts = prefs.get("fonts")if prefs and "fonts" in prefs else{
+    fonts = {
         "hindi": {"alias": "Mangal", "path": "assets/fonts/Karma-Regular.ttf"},
         "emoji": {"alias": "Emoji", "path": "assets/fonts/NotoEmoji-Regular.ttf"},
         "default": {"alias": "DejaVu", "path": "assets/fonts/DejaVuSans.ttf"}
