@@ -32,7 +32,7 @@ class PDFTool:
                 "message": "No response available yet to save as PDF."
             }
 
-        pdf_bytes = generate_pdf(last_response)
+        pdf_bytes = generate_pdf(last_query,last_response)
         
               # Return structured data instead of calling UI directly
         return {
