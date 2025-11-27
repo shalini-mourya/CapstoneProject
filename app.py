@@ -3,7 +3,7 @@ import google.generativeai as genai
 import base64, re
 import streamlit.components.v1 as components
 from utils.pdf_utils import generate_pdf
-from agent_core import Agent, InMemoryStore
+from agent_core import Agent, MemoryManager
 from tools.pdf_tool import PDFTool
 
 # --- Background Image ---
@@ -27,9 +27,9 @@ except Exception as e:
     st.stop()
     
 # --- Memory + Tools + Agent ---
-memory = InMemoryStore()
+memory = MemoryManager()
 pdf_tool = PDFTool()
-agent = Agent(memory=memory, tools=[pdf_tool])
+agent = Agent(model=gemini, memory_manager=MemoryManager())
 
 # --- Session State ---
 for key in ["response_text","last_query"]:
@@ -79,7 +79,12 @@ if user_prompt.strip():
     with st.spinner("Agent is processing ..."):
         try:
             # Pass the prompt into the agent                
-            result = agent.run(user_prompt)
+            #result = agent.run(user_prompt)
+            result = agent.process("Explain modular agent orchestration")
+            print(result["message"])   # Gemini’s response
+            result = agent.process("save as pdf")
+            print(result["message"])   # "PDF generated from the last response."
+
             # Store response in session  
             st.session_state["response_text"] = result.get("reply_text", "")
             st.session_state["last_query"] = user_prompt  

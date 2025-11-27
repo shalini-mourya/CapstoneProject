@@ -18,7 +18,6 @@ class PDFTool:
 
     def can_handle(self, prompt: str) -> bool:
         prompt_lower = prompt.lower()
-        print(f"[DEBUG] prompt_lower = {prompt_lower}")
         # Check if any trigger keyword is present
         return any(trigger in prompt_lower for trigger in self.triggers)
 
