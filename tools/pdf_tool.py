@@ -3,19 +3,36 @@ from utils.pdf_utils import generate_pdf
 import re
 
 class PDFTool:
-    
-    def can_handle(self, prompt: str) -> bool:
-        # Define trigger patterns
-        triggers = [
-            r"(save|generate|make|print|export).*pdf",
-            r"pdf.*(save|generate|make|print|export)",
-            r"(download).*pdf",
-            r"(convert).*pdf"
+    def __init__(self):
+        # Define trigger keywords/phrases
+        self.triggers = [
+            "save as pdf",
+            "export pdf",
+            "generate pdf",
+            "make pdf",
+            "print pdf",
+            "download pdf",
+            "convert to pdf"
         ]
-        # Check all triggers
-        return any(re.search(pattern, prompt, re.IGNORECASE) for pattern in triggers)
+
+
+    def can_handle(self, prompt: str) -> bool:
+        prompt_lower = prompt.lower()
+        # Check if any trigger keyword is present
+        return any(trigger in prompt_lower for trigger in self.triggers)
+
 
     def handle(self, prompt: str, memory) -> dict:
+        
+        for trigger in self.triggers:
+            if trigger in prompt_lower:
+                print(f"[PDFTool] Trigger matched: {trigger}")
+                return True
+
+        if memory is None:
+            return {"message": "⚠️ Memory object is None. Cannot access last response."}
+
+
         # Get last response from memory
         last_response = memory.get("response_text")
         last_query = memory.get("last_query")
