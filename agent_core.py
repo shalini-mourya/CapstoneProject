@@ -48,7 +48,4 @@ class Agent:
         self.memory.set("response_text", reply_text)
         self.memory.set("last_query", prompt)
 
-        return {"reply_text": reply_text}
-
-
-    
+        return {"reply_text": reply_text}    

@@ -93,10 +93,10 @@ if user_prompt.strip():
                 st.write(result["reply_text"])
             if "message" in result:
                 st.info(result["message"])
-            if "pdf_bytes" in result:
+            elif "pdf_bytes" in result:
                 st.success("PDF has been saved! Click below to download:")
                 show_pdf(result["pdf_bytes"])
-            elif st.session_state["response_text"]:
+            else st.session_state["response_text"]:
                 st.info("Tip: You can save this response as a PDF. Either click 'Save as PDF' button in the sidebar or Type 'save as pdf' in the prompt box.")
         except Exception as e:
             st.error(f"Agent error: {e}")
